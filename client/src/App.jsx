@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, Navigate, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 
 // ── Page imports ───────────────────────────────────────────────
@@ -16,11 +16,11 @@ import SharedTrip    from './pages/SharedTrip';
 // ──────────────────────────────────────────────────────────────
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('traveloop_token') || localStorage.getItem('token');
-  return token ? children : <Navigate to="/login" replace />;
+  return token ? children : <Navigate to="/" replace />;
 };
 
 // ──────────────────────────────────────────────────────────────
-// Login page (inline — from teammate's branch)
+// Login page
 // ──────────────────────────────────────────────────────────────
 function Login() {
   const [email, setEmail]       = useState('');
@@ -44,39 +44,43 @@ function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-4">
-      <div className="bg-white/90 backdrop-blur-md p-8 rounded-2xl shadow-2xl w-full max-w-md border border-white/20">
-        <h2 className="text-3xl font-bold text-gray-800 text-center mb-8 tracking-tight">Welcome Back</h2>
-        {error && <div className="bg-red-100 text-red-600 p-3 rounded-lg mb-4 text-sm text-center">{error}</div>}
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="bg-black/30 backdrop-blur-2xl p-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.3)] w-full max-w-md border border-white/20">
+        <div className="flex justify-center mb-4">
+          <span className="text-4xl drop-shadow-md">✈️</span>
+        </div>
+        <h2 className="text-3xl font-bold text-white text-center mb-8 tracking-tight">Welcome Back</h2>
+        {error && <div className="bg-red-500/20 text-red-200 border border-red-500/50 p-3 rounded-xl mb-4 text-sm text-center backdrop-blur-sm">{error}</div>}
         <form onSubmit={handleLogin} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-            <input
-              type="email" required
-              className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all"
+            <label className="block text-sm font-medium text-white/90 mb-2">Email</label>
+            <input 
+              type="email" 
+              required
+              className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/50 focus:ring-2 focus:ring-purple-400 focus:border-transparent outline-none transition-all shadow-inner"
               placeholder="you@example.com"
               value={email} onChange={(e) => setEmail(e.target.value)}
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-            <input
-              type="password" required
-              className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all"
+            <label className="block text-sm font-medium text-white/90 mb-2">Password</label>
+            <input 
+              type="password" 
+              required
+              className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/50 focus:ring-2 focus:ring-purple-400 focus:border-transparent outline-none transition-all shadow-inner"
               placeholder="••••••••"
               value={password} onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          <button
-            type="submit"
-            className="w-full py-3 px-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold rounded-xl hover:opacity-90 transition-opacity shadow-lg shadow-purple-500/30"
+          <button 
+            type="submit" 
+            className="w-full py-3.5 px-4 bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-bold rounded-xl hover:from-purple-400 hover:to-indigo-400 transition-all shadow-[0_0_15px_rgba(168,85,247,0.4)] hover:shadow-[0_0_25px_rgba(168,85,247,0.6)] hover:-translate-y-0.5 active:scale-95"
           >
             Sign In
           </button>
         </form>
-        <p className="mt-6 text-center text-gray-600">
-          Don't have an account?{' '}
-          <Link to="/signup" className="text-purple-600 font-semibold hover:underline">Sign up</Link>
+        <p className="mt-8 text-center text-white/70">
+          Don't have an account? <Link to="/signup" className="text-purple-300 font-bold hover:text-purple-200 hover:underline transition-colors">Sign up</Link>
         </p>
       </div>
     </div>
@@ -84,7 +88,7 @@ function Login() {
 }
 
 // ──────────────────────────────────────────────────────────────
-// Signup page (inline — from teammate's branch)
+// Signup page
 // ──────────────────────────────────────────────────────────────
 function Signup() {
   const [name, setName]                   = useState('');
@@ -113,57 +117,63 @@ function Signup() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-500 via-purple-500 to-indigo-500 p-4">
-      <div className="bg-white/90 backdrop-blur-md p-8 rounded-2xl shadow-2xl w-full max-w-md border border-white/20">
-        <h2 className="text-3xl font-bold text-gray-800 text-center mb-8 tracking-tight">Create Account</h2>
-        {error && <div className="bg-red-100 text-red-600 p-3 rounded-lg mb-4 text-sm text-center">{error}</div>}
-        <form onSubmit={handleSignup} className="space-y-6">
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="bg-black/30 backdrop-blur-2xl p-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.3)] w-full max-w-md border border-white/20 my-8">
+        <div className="flex justify-center mb-4">
+          <span className="text-4xl drop-shadow-md">✈️</span>
+        </div>
+        <h2 className="text-3xl font-bold text-white text-center mb-8 tracking-tight">Create Account</h2>
+        {error && <div className="bg-red-500/20 text-red-200 border border-red-500/50 p-3 rounded-xl mb-4 text-sm text-center backdrop-blur-sm">{error}</div>}
+        <form onSubmit={handleSignup} className="space-y-5">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-            <input
-              type="text" required
-              className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all"
+            <label className="block text-sm font-medium text-white/90 mb-1.5">Full Name</label>
+            <input 
+              type="text" 
+              required
+              className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/50 focus:ring-2 focus:ring-pink-400 focus:border-transparent outline-none transition-all shadow-inner"
               placeholder="John Doe"
               value={name} onChange={(e) => setName(e.target.value)}
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-            <input
-              type="email" required
-              className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all"
+            <label className="block text-sm font-medium text-white/90 mb-1.5">Email</label>
+            <input 
+              type="email" 
+              required
+              className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/50 focus:ring-2 focus:ring-pink-400 focus:border-transparent outline-none transition-all shadow-inner"
               placeholder="you@example.com"
               value={email} onChange={(e) => setEmail(e.target.value)}
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-            <input
-              type="password" required
-              className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all"
+            <label className="block text-sm font-medium text-white/90 mb-1.5">Password</label>
+            <input 
+              type="password" 
+              required
+              className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/50 focus:ring-2 focus:ring-pink-400 focus:border-transparent outline-none transition-all shadow-inner"
               placeholder="••••••••"
               value={password} onChange={(e) => setPassword(e.target.value)}
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
-            <input
-              type="password" required
-              className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all"
+            <label className="block text-sm font-medium text-white/90 mb-1.5">Confirm Password</label>
+            <input 
+              type="password" 
+              required
+              className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/50 focus:ring-2 focus:ring-pink-400 focus:border-transparent outline-none transition-all shadow-inner"
               placeholder="••••••••"
               value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}
             />
           </div>
-          <button
-            type="submit"
-            className="w-full py-3 px-4 bg-gradient-to-r from-pink-600 to-purple-600 text-white font-semibold rounded-xl hover:opacity-90 transition-opacity shadow-lg shadow-pink-500/30"
+          <button 
+            type="submit" 
+            className="w-full py-3.5 px-4 bg-gradient-to-r from-pink-500 to-purple-500 text-white font-bold rounded-xl hover:from-pink-400 hover:to-purple-400 transition-all shadow-[0_0_15px_rgba(236,72,153,0.4)] hover:shadow-[0_0_25px_rgba(236,72,153,0.6)] hover:-translate-y-0.5 active:scale-95 mt-8"
           >
-            Sign Up
+            Create Account
           </button>
         </form>
-        <p className="mt-6 text-center text-gray-600">
-          Already have an account?{' '}
-          <Link to="/login" className="text-purple-600 font-semibold hover:underline">Log in</Link>
+        <p className="mt-8 text-center text-white/70">
+          Already have an account? <Link to="/login" className="text-pink-300 font-bold hover:text-pink-200 hover:underline transition-colors">Sign in</Link>
         </p>
       </div>
     </div>
@@ -171,28 +181,86 @@ function Signup() {
 }
 
 // ──────────────────────────────────────────────────────────────
-// Root App — merged routes from both branches
+// App Content Wrapper
+// ──────────────────────────────────────────────────────────────
+function AppContent() {
+  const location = useLocation();
+  const isAuth = location.pathname === '/login' || location.pathname === '/signup' || location.pathname === '/';
+  const path = location.pathname;
+
+  const navLinkClass = (targetPath) => 
+    `flex items-center gap-2 font-semibold transition-all px-3 py-2 rounded-lg ${
+      path.startsWith(targetPath) 
+        ? 'text-indigo-700 bg-indigo-50 shadow-sm ring-1 ring-indigo-100' 
+        : 'text-gray-600 hover:text-indigo-600 hover:bg-gray-50'
+    }`;
+
+  return (
+    <>
+      {!isAuth && (
+        <nav className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-6xl bg-white/80 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] px-6 py-3 rounded-2xl flex flex-wrap gap-2 md:gap-4 justify-between border border-white/50 items-center">
+          <div className="flex items-center gap-2">
+            <span className="text-2xl drop-shadow-sm">✈️</span>
+            <span className="font-extrabold text-2xl tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 hidden sm:block">Traveloop</span>
+          </div>
+          
+          <div className="flex items-center gap-1 md:gap-2">
+            <Link to="/dashboard" className={navLinkClass('/dashboard')}>🏠 <span className="hidden md:inline">Dashboard</span></Link>
+            <Link to="/checklist" className={navLinkClass('/checklist')}>✅ <span className="hidden md:inline">Checklist</span></Link>
+            <Link to="/budget" className={navLinkClass('/budget')}>💰 <span className="hidden md:inline">Budget</span></Link>
+            <Link to="/notes" className={navLinkClass('/notes')}>📝 <span className="hidden md:inline">Journal</span></Link>
+            <Link to="/public/1" className={navLinkClass('/public')}>🌍 <span className="hidden md:inline">Public View</span></Link>
+          </div>
+
+          <button 
+            onClick={() => { localStorage.clear(); window.location.href='/login' }} 
+            className="flex items-center gap-2 text-red-500 hover:text-white hover:bg-red-500 px-4 py-2 rounded-xl font-bold transition-all active:scale-95 shadow-sm"
+          >
+            🚪 <span className="hidden md:inline">Logout</span>
+          </button>
+        </nav>
+      )}
+      {/* Advanced Cinematic Travel Background */}
+      <div className="fixed inset-0 z-[-1]">
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=2074&auto=format&fit=crop')" }}
+        ></div>
+        {/* Dark Glassmorphism Overlay */}
+        <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-[2px]"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-slate-900/10 to-slate-900/80"></div>
+      </div>
+
+      <div className={`animate-fade-in-up ${!isAuth ? "pt-28 pb-10" : ""}`}>
+        <Routes>
+          {/* Public routes */}
+          <Route path="/"               element={<LandingPage />} />
+          <Route path="/login"          element={<Login />} />
+          <Route path="/signup"         element={<Signup />} />
+          <Route path="/public/:tripId" element={<SharedTrip />} />
+
+          {/* Protected routes */}
+          <Route path="/dashboard"      element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
+          <Route path="/builder/:tripId" element={<ProtectedRoute><BuilderPage /></ProtectedRoute>} />
+          <Route path="/checklist"      element={<ProtectedRoute><Checklist /></ProtectedRoute>} />
+          <Route path="/budget"         element={<ProtectedRoute><Budget /></ProtectedRoute>} />
+          <Route path="/notes"          element={<ProtectedRoute><Notes /></ProtectedRoute>} />
+
+          {/* Fallback */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </div>
+    </>
+  );
+}
+
+// ──────────────────────────────────────────────────────────────
+// Root App
 // ──────────────────────────────────────────────────────────────
 function App() {
   return (
     <Router>
-      <Routes>
-        {/* Public routes */}
-        <Route path="/"               element={<LandingPage />} />
-        <Route path="/login"          element={<Login />} />
-        <Route path="/signup"         element={<Signup />} />
-        <Route path="/public/:tripId" element={<SharedTrip />} />
-
-        {/* Protected routes */}
-        <Route path="/dashboard"      element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
-        <Route path="/builder/:tripId" element={<ProtectedRoute><BuilderPage /></ProtectedRoute>} />
-        <Route path="/checklist"      element={<ProtectedRoute><Checklist /></ProtectedRoute>} />
-        <Route path="/budget"         element={<ProtectedRoute><Budget /></ProtectedRoute>} />
-        <Route path="/notes"          element={<ProtectedRoute><Notes /></ProtectedRoute>} />
-
-        {/* Fallback */}
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+      <AppContent />
     </Router>
   );
 }

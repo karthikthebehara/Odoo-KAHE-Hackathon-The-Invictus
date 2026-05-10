@@ -86,14 +86,45 @@ const Checklist = () => {
     return acc;
   }, {});
 
+  const totalItems = items.length;
+  const packedItems = items.filter(item => item.is_packed === 1).length;
+  const progressPercent = totalItems === 0 ? 0 : Math.round((packedItems / totalItems) * 100);
+
   if (loading) return <div className="min-h-screen flex items-center justify-center text-purple-600 font-semibold text-xl">Loading Checklist...</div>;
 
   return (
-    <div className="min-h-screen bg-gray-50 py-10 px-4">
-      <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-        <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-8 text-white">
-          <h1 className="text-3xl font-bold mb-2 tracking-tight">Packing Checklist</h1>
-          <p className="text-purple-100 opacity-90">Don't forget anything important for your trip.</p>
+    <div className="min-h-screen py-10 px-4">
+      <div className="max-w-3xl mx-auto bg-white/90 backdrop-blur-xl rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-white/50 overflow-hidden">
+        <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-8 text-white relative overflow-hidden">
+          <div className="relative z-10">
+            <h1 className="text-3xl font-bold mb-2 tracking-tight">Packing Checklist</h1>
+            <p className="text-purple-100 opacity-90">Don't forget anything important for your trip.</p>
+          </div>
+          
+          {/* Dynamic Progress Bar */}
+          <div className="mt-6 relative z-10">
+            <div className="flex justify-between text-sm font-semibold mb-2">
+              <span>Packing Progress</span>
+              <span>{progressPercent}% ({packedItems}/{totalItems})</span>
+            </div>
+            <div className="h-3 w-full bg-black/20 rounded-full overflow-hidden backdrop-blur-sm shadow-inner">
+              <div 
+                className={`h-full rounded-full transition-all duration-700 ease-out shadow-[0_0_10px_rgba(52,211,153,0.5)] ${progressPercent === 100 ? 'bg-gradient-to-r from-yellow-400 to-amber-500' : 'bg-gradient-to-r from-green-400 to-emerald-400'}`}
+                style={{ width: `${progressPercent}%` }}
+              ></div>
+            </div>
+          </div>
+          
+          {progressPercent === 100 && totalItems > 0 && (
+            <div className="mt-6 p-4 rounded-xl bg-white/20 backdrop-blur-md border border-white/30 text-center animate-celebrate shadow-lg">
+              <span className="text-2xl mr-2">✈️ 🎉</span>
+              <span className="font-bold text-lg">Fully Packed! You are ready for takeoff!</span>
+            </div>
+          )}
+          
+          {/* Decorative Background Elements */}
+          <div className="absolute top-0 right-0 -mr-16 -mt-16 w-48 h-48 rounded-full bg-white opacity-5 mix-blend-overlay"></div>
+          <div className="absolute bottom-0 right-1/4 mb-4 w-24 h-24 rounded-full bg-white opacity-5 mix-blend-overlay"></div>
         </div>
 
         <div className="p-8">
@@ -139,7 +170,7 @@ const Checklist = () => {
                   </h3>
                   <div className="space-y-3 pl-2">
                     {catItems.map((item) => (
-                      <div key={item.id} className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-xl group transition-colors border border-transparent hover:border-gray-100">
+                      <div key={item.id} className="flex items-center justify-between p-3 bg-white hover:bg-gray-50 hover:-translate-y-[2px] rounded-xl group transition-all duration-200 border border-transparent hover:border-gray-200 hover:shadow-sm">
                         <label className="flex items-center gap-4 cursor-pointer flex-1">
                           <div className={`w-6 h-6 rounded-md border-2 flex items-center justify-center transition-colors ${item.is_packed ? 'bg-green-500 border-green-500' : 'border-gray-300'}`}>
                             {item.is_packed && (
