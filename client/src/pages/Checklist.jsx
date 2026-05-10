@@ -90,7 +90,14 @@ const Checklist = () => {
   const packedItems = items.filter(item => item.is_packed === 1).length;
   const progressPercent = totalItems === 0 ? 0 : Math.round((packedItems / totalItems) * 100);
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center text-purple-600 font-semibold text-xl">Loading Checklist...</div>;
+  if (loading) return (
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="bg-white/20 backdrop-blur-xl rounded-3xl p-10 text-center border border-white/30">
+        <div className="text-5xl mb-4 animate-bounce">✅</div>
+        <p className="text-white font-bold text-xl">Loading Checklist...</p>
+      </div>
+    </div>
+  );
 
   return (
     <div className="min-h-screen py-10 px-4">

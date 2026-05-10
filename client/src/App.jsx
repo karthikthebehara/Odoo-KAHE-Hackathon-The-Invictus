@@ -288,35 +288,34 @@ function AppContent() {
   return (
     <>
       {!isAuth && (
-        <nav className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-6xl bg-black/40 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.3)] px-6 py-3 rounded-2xl flex flex-wrap gap-2 md:gap-4 justify-between border border-white/15 items-center">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center shadow-lg">
-              <span className="text-white text-lg">✈️</span>
+        <nav className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-5xl bg-white/15 backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.2)] px-6 py-3.5 rounded-2xl flex items-center justify-between border border-white/25">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 bg-white/20 rounded-xl flex items-center justify-center border border-white/30">
+              <span className="text-sm">✈️</span>
             </div>
-            <span className="font-extrabold text-xl tracking-tight text-white hidden sm:block">Traveloop</span>
+            <span className="font-black text-lg text-white tracking-tight hidden sm:block">Traveloop</span>
           </div>
           
-          <div className="flex items-center gap-1 md:gap-2">
+          <div className="flex items-center gap-1">
             <Link to="/dashboard" className={navLinkClass('/dashboard')}>🏠 <span className="hidden md:inline">Dashboard</span></Link>
             <Link to="/checklist" className={navLinkClass('/checklist')}>✅ <span className="hidden md:inline">Checklist</span></Link>
             <Link to="/budget" className={navLinkClass('/budget')}>💰 <span className="hidden md:inline">Budget</span></Link>
             <Link to="/notes" className={navLinkClass('/notes')}>📝 <span className="hidden md:inline">Journal</span></Link>
-            <Link to="/public/1" className={navLinkClass('/public')}>🌍 <span className="hidden md:inline">Public View</span></Link>
+            <Link to="/public/1" className={navLinkClass('/public')}>🌍 <span className="hidden md:inline">Public</span></Link>
           </div>
 
           <button 
             onClick={() => { logout(); navigate('/login'); }} 
-            className="flex items-center gap-2 text-red-300 hover:text-white hover:bg-red-500/80 px-4 py-2 rounded-xl font-bold transition-all active:scale-95 text-sm border border-red-400/30 hover:border-red-500"
+            className="flex items-center gap-1.5 bg-red-500/80 hover:bg-red-500 text-white px-4 py-2 rounded-xl font-bold transition-all active:scale-95 text-sm border border-red-400/50"
           >
-            🚪 <span className="hidden md:inline">Logout</span>
+            🚪 <span className="hidden sm:inline">Logout</span>
           </button>
         </nav>
       )}
-      {/* Solid Premium Gradient Background - always works */}
-      <div className="fixed inset-0 z-[-1] bg-gradient-to-br from-slate-900 via-indigo-950 to-purple-950">
-        <div className="absolute top-0 left-[-10%] w-[50%] h-[50%] rounded-full bg-indigo-600/20 blur-[120px]"></div>
-        <div className="absolute bottom-0 right-[-10%] w-[50%] h-[50%] rounded-full bg-purple-600/20 blur-[120px]"></div>
-        <div className="absolute top-[30%] right-[20%] w-[30%] h-[30%] rounded-full bg-pink-600/10 blur-[80px]"></div>
+      {/* Vibrant Gradient Background */}
+      <div className="fixed inset-0 z-[-1] bg-gradient-to-br from-violet-600 via-purple-700 to-indigo-800">
+        <div className="absolute top-[-20%] right-[-10%] w-[60%] h-[60%] rounded-full bg-pink-500/20 blur-[120px]"></div>
+        <div className="absolute bottom-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-blue-500/20 blur-[100px]"></div>
       </div>
 
       <div className={`animate-fade-in-up ${!isAuth ? "pt-28 pb-10" : ""}`}>

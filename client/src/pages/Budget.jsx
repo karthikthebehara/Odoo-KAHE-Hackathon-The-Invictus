@@ -30,7 +30,25 @@ const Budget = () => {
     }
   };
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center text-indigo-600 font-semibold text-xl">Loading Budget...</div>;
+  if (loading) return (
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="bg-white/20 backdrop-blur-xl rounded-3xl p-10 text-center border border-white/30">
+        <div className="text-5xl mb-4 animate-bounce">💰</div>
+        <p className="text-white font-bold text-xl">Loading Budget...</p>
+      </div>
+    </div>
+  );
+
+  if (error) return (
+    <div className="min-h-screen flex items-center justify-center px-4">
+      <div className="bg-white/20 backdrop-blur-xl rounded-3xl p-10 text-center border border-white/30 max-w-md">
+        <div className="text-5xl mb-4">⚠️</div>
+        <h2 className="text-white font-black text-2xl mb-3">Could not load budget</h2>
+        <p className="text-white/70 mb-6">Please make sure you are logged in and the server is running.</p>
+        <button onClick={fetchBudget} className="px-6 py-3 bg-white text-purple-700 font-bold rounded-xl hover:bg-white/90 transition-all">Try Again</button>
+      </div>
+    </div>
+  );
 
   return (
     <div className="min-h-screen py-10 px-4">
