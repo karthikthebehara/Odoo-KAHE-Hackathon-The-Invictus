@@ -3,13 +3,18 @@ import { BrowserRouter as Router, Routes, Route, Link, Navigate, useNavigate, us
 import axios from 'axios';
 
 // ── Page imports ───────────────────────────────────────────────
-import LandingPage from './pages/LandingPage';
-import DashboardPage from './pages/DashboardPage';
-import BuilderPage from './pages/BuilderPage';
-import Checklist from './pages/Checklist';
-import Budget from './pages/Budget';
-import Notes from './pages/Notes';
-import SharedTrip from './pages/SharedTrip';
+import LandingPage        from './pages/LandingPage';
+import DashboardPage      from './pages/DashboardPage';
+import BuilderPage        from './pages/BuilderPage';
+import Checklist          from './pages/Checklist';
+import Budget             from './pages/Budget';
+import Notes              from './pages/Notes';
+import SharedTrip         from './pages/SharedTrip';
+import MyTripsPage        from './pages/MyTripsPage';
+import CreateTripPage     from './pages/CreateTripPage';
+import ItineraryViewPage  from './pages/ItineraryViewPage';
+import ProfilePage        from './pages/ProfilePage';
+import AdminPage          from './pages/AdminPage';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
 // ──────────────────────────────────────────────────────────────
@@ -274,46 +279,65 @@ function Signup() {
 function AppContent() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const isAuth = location.pathname === '/login' || location.pathname === '/signup' || location.pathname === '/';
   const path = location.pathname;
 
   const navLinkClass = (targetPath) =>
-    `flex items-center gap-2.5 font-bold transition-all px-6 py-3.5 rounded-2xl text-lg ${path.startsWith(targetPath)
-      ? 'text-white bg-gradient-to-r from-indigo-500/20 to-purple-500/20 border border-indigo-500/40 shadow-[0_0_20px_rgba(99,102,241,0.2)]'
-      : 'text-slate-300 hover:text-white hover:bg-white/10 hover:scale-[1.02] hover:shadow-lg hover:shadow-white/5 border border-transparent'
+    `flex items-center gap-2 font-semibold transition-all px-4 py-2.5 rounded-xl text-sm ${path.startsWith(targetPath)
+      ? 'text-white bg-gradient-to-r from-indigo-500/20 to-purple-500/20 border border-indigo-500/40 shadow-[0_0_20px_rgba(99,102,241,0.15)]'
+      : 'text-slate-300 hover:text-white hover:bg-white/10 border border-transparent'
     }`;
 
   return (
     <>
       {!isAuth && (
-        <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-10" style={{ background: 'rgba(15,23,42,0.97)', backdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(51,65,85,0.5)', minHeight: '80px', paddingTop: '16px', paddingBottom: '16px' }}>
-          <Link to="/dashboard" className="flex items-center gap-4 hover:scale-105 transition-transform group">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-cyan-500 flex items-center justify-center shadow-[0_0_30px_rgba(99,102,241,0.4)] group-hover:shadow-[0_0_40px_rgba(99,102,241,0.6)] transition-shadow">
-              <span className="text-2xl animate-pulse">✈️</span>
+        <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6" style={{ background: 'rgba(15,23,42,0.97)', backdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(51,65,85,0.5)', minHeight: '72px', paddingTop: '12px', paddingBottom: '12px' }}>
+          <Link to="/dashboard" className="flex items-center gap-3 hover:scale-105 transition-transform group flex-shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-cyan-500 flex items-center justify-center shadow-[0_0_25px_rgba(99,102,241,0.4)] group-hover:shadow-[0_0_35px_rgba(99,102,241,0.6)] transition-shadow">
+              <span className="text-xl">✈️</span>
             </div>
-            <span className="font-extrabold text-2xl text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-300 tracking-tight">Traveloop</span>
+            <span className="font-extrabold text-xl text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-300 tracking-tight">Traveloop</span>
           </Link>
 
-          <div className="flex items-center gap-3">
-            <Link to="/dashboard" className={navLinkClass('/dashboard')}>🏠 Dashboard</Link>
-            <Link to="/checklist" className={navLinkClass('/checklist')}>✅ Checklist</Link>
-            <Link to="/budget" className={navLinkClass('/budget')}>💰 Budget</Link>
-            <Link to="/notes" className={navLinkClass('/notes')}>📝 Journal</Link>
-            <Link to="/public/1" className={navLinkClass('/public')}>🌍 Public View</Link>
+          <div className="flex items-center gap-1 flex-1 justify-center">
+            <Link to="/dashboard"   className={navLinkClass('/dashboard')}>🏠 Home</Link>
+            <Link to="/trips"       className={navLinkClass('/trips')}>🗺️ My Trips</Link>
+            <Link to="/checklist"   className={navLinkClass('/checklist')}>✅ Checklist</Link>
+            <Link to="/budget"      className={navLinkClass('/budget')}>💰 Budget</Link>
+            <Link to="/notes"       className={navLinkClass('/notes')}>📝 Journal</Link>
+            <Link to="/admin"       className={navLinkClass('/admin')}>📊 Admin</Link>
           </div>
 
-          <button
-            onClick={() => { logout(); navigate('/login'); }}
-            className="group flex items-center gap-2 px-6 py-3.5 rounded-2xl font-bold text-lg text-white bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 shadow-[0_0_20px_rgba(225,29,72,0.3)] hover:shadow-[0_0_30px_rgba(225,29,72,0.5)] hover:-translate-y-0.5 active:scale-95 transition-all border border-red-400/30"
-          >
-            <span>Logout</span>
-            <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-            </svg>
-          </button>
+          <div className="flex items-center gap-2 flex-shrink-0">
+            {/* Profile button */}
+            <Link
+              to="/profile"
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-sm transition-all ${
+                path === '/profile'
+                  ? 'text-white bg-indigo-500/20 border border-indigo-500/40'
+                  : 'text-slate-300 hover:text-white hover:bg-white/10 border border-transparent'
+              }`}
+            >
+              <div className="w-6 h-6 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold">
+                {user?.name?.charAt(0).toUpperCase() || '?'}
+              </div>
+              {user?.name?.split(' ')[0] || 'Profile'}
+            </Link>
+
+            <button
+              onClick={() => { logout(); navigate('/login'); }}
+              className="group flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-sm text-white bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 shadow-[0_0_15px_rgba(225,29,72,0.25)] hover:shadow-[0_0_25px_rgba(225,29,72,0.4)] hover:-translate-y-0.5 active:scale-95 transition-all border border-red-400/30"
+            >
+              Logout
+              <svg className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+              </svg>
+            </button>
+          </div>
         </nav>
       )}
+
       {/* Background */}
       <div className="fixed inset-0 z-[-1]" style={{ background: 'var(--color-bg)' }}>
         <div className="absolute inset-0 bg-cover bg-center bg-fixed" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1488646953014-85cb44e25828?q=80&w=2070&auto=format&fit=crop')" }} />
@@ -322,20 +346,25 @@ function AppContent() {
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(6,182,212,0.15),transparent_60%)]" />
       </div>
 
-      <div className="animate-fade-in-up" style={!isAuth ? { paddingTop: '120px', paddingBottom: '40px' } : {}}>
+      <div className="animate-fade-in-up" style={!isAuth ? { paddingTop: '100px', paddingBottom: '40px' } : {}}>
         <Routes>
           {/* Public routes */}
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
+          <Route path="/"               element={<LandingPage />} />
+          <Route path="/login"          element={<Login />} />
+          <Route path="/signup"         element={<Signup />} />
           <Route path="/public/:tripId" element={<SharedTrip />} />
 
           {/* Protected routes */}
-          <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
-          <Route path="/builder/:tripId" element={<ProtectedRoute><BuilderPage /></ProtectedRoute>} />
-          <Route path="/checklist" element={<ProtectedRoute><Checklist /></ProtectedRoute>} />
-          <Route path="/budget" element={<ProtectedRoute><Budget /></ProtectedRoute>} />
-          <Route path="/notes" element={<ProtectedRoute><Notes /></ProtectedRoute>} />
+          <Route path="/dashboard"            element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
+          <Route path="/trips"                element={<ProtectedRoute><MyTripsPage /></ProtectedRoute>} />
+          <Route path="/trips/new"            element={<ProtectedRoute><CreateTripPage /></ProtectedRoute>} />
+          <Route path="/trips/:tripId/view"   element={<ProtectedRoute><ItineraryViewPage /></ProtectedRoute>} />
+          <Route path="/builder/:tripId"      element={<ProtectedRoute><BuilderPage /></ProtectedRoute>} />
+          <Route path="/checklist"            element={<ProtectedRoute><Checklist /></ProtectedRoute>} />
+          <Route path="/budget"               element={<ProtectedRoute><Budget /></ProtectedRoute>} />
+          <Route path="/notes"                element={<ProtectedRoute><Notes /></ProtectedRoute>} />
+          <Route path="/profile"              element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+          <Route path="/admin"                element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
 
           {/* Fallback */}
           <Route path="*" element={<Navigate to="/" replace />} />

@@ -190,6 +190,31 @@ CREATE TABLE IF NOT EXISTS packing_checklist (
   COLLATE=utf8mb4_unicode_ci;
 
 
+-- -------------------------------------------------------------
+-- 7. TRIP NOTES / JOURNAL
+--    Free-text notes tied to a trip, each with optional title.
+-- -------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS trip_notes (
+    id         INT UNSIGNED   NOT NULL AUTO_INCREMENT,
+    trip_id    INT UNSIGNED   NOT NULL,
+    title      VARCHAR(200)       NULL DEFAULT NULL,
+    content    TEXT           NOT NULL,
+    created_at DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP
+                                        ON UPDATE CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (id),
+    CONSTRAINT fk_notes_trip
+        FOREIGN KEY (trip_id) REFERENCES trips (id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    KEY idx_notes_trip (trip_id)
+) ENGINE=InnoDB
+  DEFAULT CHARSET=utf8mb4
+  COLLATE=utf8mb4_unicode_ci;
+
+
 -- =============================================================
 SET FOREIGN_KEY_CHECKS = 1;
 -- =============================================================
