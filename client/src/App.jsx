@@ -197,19 +197,21 @@ function AppContent() {
   const path = location.pathname;
 
   const navLinkClass = (targetPath) => 
-    `flex items-center gap-2 font-semibold transition-all px-3 py-2 rounded-lg ${
+    `flex items-center gap-2 font-semibold transition-all px-3 py-2 rounded-lg text-sm ${
       path.startsWith(targetPath) 
-        ? 'text-indigo-700 bg-indigo-50 shadow-sm ring-1 ring-indigo-100' 
-        : 'text-gray-600 hover:text-indigo-600 hover:bg-gray-50'
+        ? 'text-white bg-white/20 shadow-sm ring-1 ring-white/30' 
+        : 'text-white/70 hover:text-white hover:bg-white/10'
     }`;
 
   return (
     <>
       {!isAuth && (
-        <nav className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-6xl bg-white/80 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] px-6 py-3 rounded-2xl flex flex-wrap gap-2 md:gap-4 justify-between border border-white/50 items-center">
+        <nav className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-6xl bg-black/40 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.3)] px-6 py-3 rounded-2xl flex flex-wrap gap-2 md:gap-4 justify-between border border-white/15 items-center">
           <div className="flex items-center gap-2">
-            <span className="text-2xl drop-shadow-sm">✈️</span>
-            <span className="font-extrabold text-2xl tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 hidden sm:block">Traveloop</span>
+            <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center shadow-lg">
+              <span className="text-white text-lg">✈️</span>
+            </div>
+            <span className="font-extrabold text-xl tracking-tight text-white hidden sm:block">Traveloop</span>
           </div>
           
           <div className="flex items-center gap-1 md:gap-2">
@@ -222,7 +224,7 @@ function AppContent() {
 
           <button 
             onClick={() => { logout(); navigate('/login'); }} 
-            className="flex items-center gap-2 text-red-500 hover:text-white hover:bg-red-500 px-4 py-2 rounded-xl font-bold transition-all active:scale-95 shadow-sm"
+            className="flex items-center gap-2 text-red-300 hover:text-white hover:bg-red-500/80 px-4 py-2 rounded-xl font-bold transition-all active:scale-95 text-sm border border-red-400/30 hover:border-red-500"
           >
             🚪 <span className="hidden md:inline">Logout</span>
           </button>
