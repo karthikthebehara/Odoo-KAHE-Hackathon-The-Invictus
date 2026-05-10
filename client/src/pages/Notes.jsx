@@ -17,6 +17,16 @@ const Notes = () => {
   const token = localStorage.getItem('traveloop_token') || localStorage.getItem('token');
   const authConfig = { headers: { Authorization: `Bearer ${token}` } };
 
+  async function fetchTripDetails(activeTripId) {
+    try {
+      const res = await axios.get(`http://localhost:5000/api/trips/${activeTripId}`, authConfig);
+      const trip = res.data.data ? res.data.data.trip : res.data;
+      setTitle(trip.title);
+      setNotes(trip.description || '');
+      setLoading(false);
+    } catch (err) { console.error(err); setLoading(false); }
+  };
+
   useEffect(() => { 
     const initData = async () => {
       try {
@@ -39,15 +49,6 @@ const Notes = () => {
     initData();
   }, []);
 
-  const fetchTripDetails = async (activeTripId) => {
-    try {
-      const res = await axios.get(`http://localhost:5000/api/trips/${activeTripId}`, authConfig);
-      const trip = res.data.data ? res.data.data.trip : res.data;
-      setTitle(trip.title);
-      setNotes(trip.description || '');
-      setLoading(false);
-    } catch (err) { console.error(err); setLoading(false); }
-  };
 
   const handleNotesChange = (e) => {
     const newNotes = e.target.value;
@@ -57,7 +58,7 @@ const Notes = () => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
     timeoutRef.current = setTimeout(async () => {
       try {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('traveloop_token') || localStorage.getItem('token');
         const authConfig = { headers: { Authorization: `Bearer ${token}` } };
         await axios.put(`http://localhost:5000/api/trips/${tripId}`, { title, description: newNotes }, authConfig);
         setSaving(false);
@@ -89,7 +90,7 @@ const Notes = () => {
 
   return (
     <div className="w-full px-4 md:px-8 pb-20">
-      <div className="w-full max-w-7xl mx-auto">
+      <div className="w-full max-w-4xl mx-auto">
         
         {/* Header */}
         <div className="glass p-10 mb-8 relative overflow-hidden">

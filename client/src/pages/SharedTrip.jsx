@@ -10,11 +10,7 @@ const SharedTrip = () => {
   const [error, setError] = useState('');
   const [copying, setCopying] = useState(false);
 
-  useEffect(() => {
-    fetchTrip();
-  }, [tripId]);
-
-  const fetchTrip = async () => {
+  async function fetchTrip() {
     try {
       const idToFetch = tripId || 1; 
       const res = await axios.get(`http://localhost:5000/api/trips/public/${idToFetch}`);
@@ -32,6 +28,11 @@ const SharedTrip = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchTrip();
+  }, [tripId]);
+
 
   const handleCopyTrip = async () => {
     setCopying(true);
@@ -69,7 +70,7 @@ const SharedTrip = () => {
 
   return (
     <div className="w-full px-4 md:px-8 pb-20">
-      <div className="w-full max-w-7xl mx-auto space-y-8">
+      <div className="w-full max-w-5xl mx-auto space-y-8">
         
         {/* Hero Section */}
         <div className="glass p-10 relative overflow-hidden text-center rounded-2xl">

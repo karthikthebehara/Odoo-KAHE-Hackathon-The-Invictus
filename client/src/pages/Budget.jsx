@@ -13,6 +13,18 @@ const Budget = () => {
   const token = localStorage.getItem('traveloop_token') || localStorage.getItem('token');
   const authConfig = { headers: { Authorization: `Bearer ${token}` } };
 
+  async function fetchBudget(activeTripId) {
+    try {
+      const res = await axios.get(`http://localhost:5000/api/trips/${activeTripId}/budget`, authConfig);
+      setBudgetData(res.data.data ? res.data.data : res.data);
+      setLoading(false);
+    } catch (err) {
+      console.error(err);
+      setError('Failed to load budget data.');
+      setLoading(false);
+    }
+  };
+
   useEffect(() => { 
     const initData = async () => {
       try {
@@ -35,17 +47,6 @@ const Budget = () => {
     initData();
   }, []);
 
-  const fetchBudget = async (activeTripId) => {
-    try {
-      const res = await axios.get(`http://localhost:5000/api/trips/${activeTripId}/budget`, authConfig);
-      setBudgetData(res.data.data ? res.data.data : res.data);
-      setLoading(false);
-    } catch (err) {
-      console.error(err);
-      setError('Failed to load budget data.');
-      setLoading(false);
-    }
-  };
 
   if (loading) return (
     <div className="min-h-[60vh] flex items-center justify-center">

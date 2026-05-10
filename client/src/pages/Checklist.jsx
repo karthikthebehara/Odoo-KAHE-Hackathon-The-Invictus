@@ -14,6 +14,18 @@ const Checklist = () => {
   const token = localStorage.getItem('traveloop_token') || localStorage.getItem('token');
   const authConfig = { headers: { Authorization: `Bearer ${token}` } };
 
+  async function fetchItems(activeTripId) {
+    try {
+      const res = await axios.get(`http://localhost:5000/api/trips/${activeTripId}/checklist`, authConfig);
+      setItems(res.data.data ? res.data.data.items : res.data);
+      setLoading(false);
+    } catch (err) {
+      console.error(err);
+      setError('Failed to load checklist. Ensure backend is running and you are logged in.');
+      setLoading(false);
+    }
+  };
+
   useEffect(() => { 
     const initData = async () => {
       try {
@@ -37,17 +49,6 @@ const Checklist = () => {
     initData();
   }, []);
 
-  const fetchItems = async (activeTripId) => {
-    try {
-      const res = await axios.get(`http://localhost:5000/api/trips/${activeTripId}/checklist`, authConfig);
-      setItems(res.data.data ? res.data.data.items : res.data);
-      setLoading(false);
-    } catch (err) {
-      console.error(err);
-      setError('Failed to load checklist. Ensure backend is running and you are logged in.');
-      setLoading(false);
-    }
-  };
 
   const handleAddItem = async (e) => {
     e.preventDefault();
@@ -108,7 +109,7 @@ const Checklist = () => {
 
   return (
     <div className="w-full px-4 md:px-8 pb-20">
-      <div className="w-full max-w-7xl mx-auto">
+      <div className="w-full max-w-3xl mx-auto">
         <div className="glass overflow-hidden">
 
           {/* Header with Progress */}
