@@ -10,18 +10,22 @@ const Budget = () => {
 
   const COLORS = ['#8b5cf6', '#ec4899', '#3b82f6', '#10b981', '#f59e0b', '#64748b'];
 
+  const token = localStorage.getItem('token');
+  const authConfig = { headers: { Authorization: `Bearer ${token}` } };
+
   useEffect(() => {
     fetchBudget();
   }, []);
 
   const fetchBudget = async () => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/budget/${tripId}`);
-      setBudgetData(res.data);
+      const res = await axios.get(`http://localhost:5000/api/trips/${tripId}/budget`, authConfig);
+      // The new backend might return data inside a data object
+      setBudgetData(res.data.data ? res.data.data : res.data);
       setLoading(false);
     } catch (err) {
       console.error(err);
-      setError('Failed to load budget data. Make sure backend is running and activities exist.');
+      setError('Failed to load budget data. Ensure backend is running and you are logged in.');
       setLoading(false);
     }
   };

@@ -16,9 +16,15 @@ const Notes = () => {
 
   const fetchTripDetails = async () => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/trips/${tripId}`);
-      setTitle(res.data.title);
-      setNotes(res.data.description || '');
+      const token = localStorage.getItem('token');
+      const authConfig = { headers: { Authorization: `Bearer ${token}` } };
+      
+      const res = await axios.get(`http://localhost:5000/api/trips/${tripId}`, authConfig);
+      // Backend returns { status: 'success', data: { trip: { ... } } }
+      const trip = res.data.data ? res.data.data.trip : res.data;
+      
+      setTitle(trip.title);
+      setNotes(trip.description || '');
       setLoading(false);
     } catch (err) {
       console.error(err);
@@ -39,7 +45,14 @@ const Notes = () => {
 
     timeoutRef.current = setTimeout(async () => {
       try {
-        await axios.put(`http://localhost:5000/api/trips/${tripId}/notes`, { notes: newNotes });
+        const token = localStorage.getItem('token');
+        const authConfig = { headers: { Authorization: `Bearer ${token}` } };
+        
+        await axios.put(`http://localhost:5000/api/trips/${tripId}`, { 
+          title: title, 
+          description: newNotes 
+        }, authConfig);
+        
         setSaving(false);
         setSaveMessage('Saved');
         

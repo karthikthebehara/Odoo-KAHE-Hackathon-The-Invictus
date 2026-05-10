@@ -12,18 +12,22 @@ const Checklist = () => {
 
   const categories = ['General', 'Clothes', 'Toiletries', 'Documents', 'Electronics'];
 
+  const token = localStorage.getItem('token');
+  const authConfig = { headers: { Authorization: `Bearer ${token}` } };
+
   useEffect(() => {
     fetchItems();
   }, []);
 
   const fetchItems = async () => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/checklist/${tripId}`);
-      setItems(res.data);
+      const res = await axios.get(`http://localhost:5000/api/trips/${tripId}/checklist`, authConfig);
+      // The new backend might return data inside a data object or directly
+      setItems(res.data.data ? res.data.data.items : res.data);
       setLoading(false);
     } catch (err) {
       console.error(err);
-      setError('Failed to load checklist. Ensure backend is running.');
+      setError('Failed to load checklist. Ensure backend is running and you are logged in.');
       setLoading(false);
     }
   };
@@ -36,12 +40,15 @@ const Checklist = () => {
     }
     setError('');
     try {
-      const res = await axios.post(`http://localhost:5000/api/checklist/${tripId}`, {
+      const res = await axios.post(`http://localhost:5000/api/trips/${tripId}/checklist`, {
         item_name: newItemName,
         category: newCategory,
         quantity: 1
-      });
-      setItems([...items, res.data]);
+      }, authConfig);
+      
+      // Update with new item from response
+      const addedItem = res.data.data ? res.data.data.item : res.data;
+      setItems([...items, addedItem]);
       setNewItemName('');
     } catch (err) {
       console.error(err);
@@ -54,7 +61,7 @@ const Checklist = () => {
       const newStatus = currentStatus === 1 ? 0 : 1;
       // Optimistic update
       setItems(items.map(item => item.id === id ? { ...item, is_packed: newStatus } : item));
-      await axios.put(`http://localhost:5000/api/checklist/${id}`, { is_packed: newStatus });
+      await axios.patch(`http://localhost:5000/api/trips/${tripId}/checklist/${id}`, { is_packed: newStatus }, authConfig);
     } catch (err) {
       console.error(err);
       // Revert if error
@@ -65,7 +72,7 @@ const Checklist = () => {
   const handleDelete = async (id) => {
     try {
       setItems(items.filter(item => item.id !== id));
-      await axios.delete(`http://localhost:5000/api/checklist/${id}`);
+      await axios.delete(`http://localhost:5000/api/trips/${tripId}/checklist/${id}`, authConfig);
     } catch (err) {
       console.error(err);
       fetchItems();

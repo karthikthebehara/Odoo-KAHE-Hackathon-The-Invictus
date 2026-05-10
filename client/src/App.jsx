@@ -18,10 +18,15 @@ function Login() {
       // Simulate API call to port 5000
       const response = await axios.post('http://localhost:5000/api/auth/login', { email, password })
       console.log('Logged in:', response.data)
+      if (response.data && response.data.token) {
+        localStorage.setItem('token', response.data.token)
+      }
       navigate('/checklist')
     } catch (err) {
-      if (err.response && err.response.data && err.response.data.error) {
-        setError(err.response.data.error)
+      if (err.response && err.response.data && err.response.data.message) {
+        setError(err.response.data.message)
+      } else if (err.response && err.response.data && err.response.data.errors) {
+        setError(err.response.data.errors[0])
       } else {
         setError('Invalid credentials or server not reachable.')
       }
@@ -88,12 +93,18 @@ function Signup() {
     
     try {
       // Simulate API call to port 5000
-      const response = await axios.post('http://localhost:5000/api/auth/signup', { name, email, password })
+      const response = await axios.post('http://localhost:5000/api/auth/register', { name, email, password })
       console.log('Signed up:', response.data)
+      if (response.data && response.data.token) {
+        localStorage.setItem('token', response.data.token)
+      }
       navigate('/')
     } catch (err) {
-      if (err.response && err.response.data && err.response.data.error) {
-        setError(err.response.data.error)
+      if (err.response && err.response.data) {
+        const { message, errors } = err.response.data;
+        if (message) setError(message);
+        else if (errors && errors.length > 0) setError(errors[0]);
+        else setError('Registration failed');
       } else {
         setError('Registration failed or server not reachable.')
       }
