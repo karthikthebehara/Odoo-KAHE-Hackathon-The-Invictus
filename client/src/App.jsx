@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom'
 import axios from 'axios'
 import Checklist from './pages/Checklist'
 import Budget from './pages/Budget'
@@ -176,17 +176,71 @@ function Signup() {
   )
 }
 
+function AppContent() {
+  const location = useLocation()
+  const isAuth = location.pathname === '/' || location.pathname === '/signup'
+  const path = location.pathname
+
+  const navLinkClass = (targetPath) => 
+    `flex items-center gap-2 font-semibold transition-all px-3 py-2 rounded-lg ${
+      path.startsWith(targetPath) 
+        ? 'text-indigo-700 bg-indigo-50 shadow-sm ring-1 ring-indigo-100' 
+        : 'text-gray-600 hover:text-indigo-600 hover:bg-gray-50'
+    }`
+
+  return (
+    <>
+      {!isAuth && (
+        <nav className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-6xl bg-white/80 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] px-6 py-3 rounded-2xl flex flex-wrap gap-2 md:gap-4 justify-between border border-white/50 items-center">
+          <div className="flex items-center gap-2">
+            <span className="text-2xl drop-shadow-sm">✈️</span>
+            <span className="font-extrabold text-2xl tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 hidden sm:block">Traveloop</span>
+          </div>
+          
+          <div className="flex items-center gap-1 md:gap-2">
+            <Link to="/checklist" className={navLinkClass('/checklist')}>✅ <span className="hidden md:inline">Checklist</span></Link>
+            <Link to="/budget" className={navLinkClass('/budget')}>💰 <span className="hidden md:inline">Budget</span></Link>
+            <Link to="/notes" className={navLinkClass('/notes')}>📝 <span className="hidden md:inline">Journal</span></Link>
+            <Link to="/public/1" className={navLinkClass('/public')}>🌍 <span className="hidden md:inline">Public View</span></Link>
+          </div>
+
+          <button 
+            onClick={() => { localStorage.clear(); window.location.href='/' }} 
+            className="flex items-center gap-2 text-red-500 hover:text-white hover:bg-red-500 px-4 py-2 rounded-xl font-bold transition-all active:scale-95 shadow-sm"
+          >
+            🚪 <span className="hidden md:inline">Logout</span>
+          </button>
+        </nav>
+      )}
+      {/* Advanced Cinematic Travel Background */}
+      <div className="fixed inset-0 z-[-1]">
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=2074&auto=format&fit=crop')" }}
+        ></div>
+        {/* Dark Glassmorphism Overlay */}
+        <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-[2px]"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-slate-900/10 to-slate-900/80"></div>
+      </div>
+
+      <div className={`animate-fade-in-up ${!isAuth ? "pt-28 pb-10" : ""}`}>
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/checklist" element={<Checklist />} />
+          <Route path="/budget" element={<Budget />} />
+          <Route path="/notes" element={<Notes />} />
+          <Route path="/public/:tripId" element={<SharedTrip />} />
+        </Routes>
+      </div>
+    </>
+  )
+}
+
 function App() {
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/checklist" element={<Checklist />} />
-        <Route path="/budget" element={<Budget />} />
-        <Route path="/notes" element={<Notes />} />
-        <Route path="/public/:tripId" element={<SharedTrip />} />
-      </Routes>
+      <AppContent />
     </Router>
   )
 }
