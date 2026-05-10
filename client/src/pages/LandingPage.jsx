@@ -1,106 +1,116 @@
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plane, Map, DollarSign, CheckSquare, Globe, ArrowRight } from 'lucide-react';
+import { Globe, Map, CheckSquare, DollarSign, ArrowRight, Plane } from 'lucide-react';
+import api from '../api/axios';
 
 const features = [
-  { icon: Map,         emoji: '🗺️', title: 'Multi-City Itinerary', desc: 'Plan stops across cities with smart scheduling & drag-and-drop.' },
-  { icon: DollarSign, emoji: '💸', title: 'Budget Tracker',        desc: 'Real-time spend tracking with beautiful visual breakdowns.' },
-  { icon: CheckSquare,emoji: '✅', title: 'Packing Checklist',     desc: 'Smart checklists with progress tracking so you never forget a thing.' },
-  { icon: Globe,      emoji: '🌍', title: 'Public Sharing',        desc: 'Share your itinerary with the world via a stunning public page.' },
+  { icon: Map,          title: 'Multi-City Itinerary', desc: 'Plan stops across cities with drag-and-drop reordering.' },
+  { icon: DollarSign,   title: 'Budget Tracker',       desc: 'Track spend per category and get real-time remaining budget.' },
+  { icon: CheckSquare,  title: 'Packing Checklist',    desc: 'Never forget a thing — organised checklists per trip.' },
+  { icon: Globe,        title: 'Public Sharing',       desc: 'Share your itinerary with friends via a public link.' },
 ];
 
 export default function LandingPage() {
-  const navigate = useNavigate();
+  const navigate  = useNavigate();
+  const [dbOk, setDbOk] = useState(null);
+
+  // Prove the API connection is live
+  useEffect(() => {
+    api.get('/../../')          // hits GET / on the Express server
+      .then((r) => setDbOk(r.data?.db_test === 2))
+      .catch(() => setDbOk(false));
+  }, []);
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 relative overflow-hidden">
+    <div className="min-h-screen flex flex-col" style={{ background: 'var(--color-bg)' }}>
 
-      {/* Decorative blobs */}
-      <div className="absolute top-[-20%] left-[-10%] w-96 h-96 bg-white/10 rounded-full blur-3xl pointer-events-none"></div>
-      <div className="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-pink-400/20 rounded-full blur-3xl pointer-events-none"></div>
-      <div className="absolute top-[40%] left-[20%] w-64 h-64 bg-indigo-400/10 rounded-full blur-3xl pointer-events-none"></div>
-
-      {/* Navbar */}
-      <nav className="flex items-center justify-between px-8 py-6 relative z-10">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center border border-white/30">
-            <Plane size={20} className="text-white" />
-          </div>
-          <span className="text-2xl font-black text-white tracking-tight drop-shadow">Traveloop</span>
+      {/* ── Navbar ── */}
+      <nav className="flex items-center justify-between px-8 py-5 border-b border-slate-800">
+        <div className="flex items-center gap-2 text-xl font-bold">
+          <Plane className="text-indigo-400" size={22} />
+          <span className="gradient-text">Traveloop</span>
         </div>
-        <div className="flex gap-3 items-center">
+        <div className="flex gap-3">
           <button
             onClick={() => navigate('/login')}
-            className="px-6 py-2.5 rounded-xl border-2 border-white/40 text-white font-semibold text-sm hover:bg-white/10 hover:border-white transition-all"
+            className="px-5 py-2 rounded-lg border border-slate-600 text-slate-300 hover:border-indigo-500 hover:text-white transition-all text-sm font-medium"
           >
             Sign In
           </button>
           <button
             onClick={() => navigate('/signup')}
-            className="px-6 py-2.5 rounded-xl bg-white text-indigo-700 font-black text-sm hover:bg-white/90 hover:-translate-y-0.5 hover:shadow-xl transition-all active:scale-95"
+            className="btn-primary text-sm"
           >
-            Get Started →
+            Get Started <ArrowRight size={15} />
           </button>
         </div>
       </nav>
 
-      {/* Hero */}
-      <section className="flex-1 flex flex-col items-center justify-center text-center px-6 py-16 relative z-10">
-        <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white/15 border border-white/25 text-white font-semibold text-sm mb-8 backdrop-blur-sm">
-          <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
-          Your All-in-One Travel Planner ✈️
-        </div>
+      {/* ── Hero ── */}
+      <section className="flex-1 flex flex-col items-center justify-center text-center px-6 py-24 relative overflow-hidden">
+        {/* Glow blob */}
+        <div
+          className="absolute w-96 h-96 rounded-full opacity-20 blur-3xl pointer-events-none"
+          style={{ background: 'radial-gradient(circle, #6366f1, #06b6d4)', top: '10%', left: '50%', transform: 'translateX(-50%)' }}
+        />
 
-        <h1 className="text-6xl md:text-8xl font-black text-white leading-[1.05] tracking-tight mb-6 drop-shadow-2xl">
-          Plan Trips That<br/>
-          <span className="text-white/85">Feel Like</span>{' '}
-          <span className="bg-clip-text text-transparent bg-white drop-shadow-lg" style={{WebkitTextStroke: '2px rgba(255,255,255,0.6)'}}>Magic</span>
+        <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold mb-6 border border-indigo-500/40 text-indigo-300"
+          style={{ background: 'rgba(99,102,241,0.1)' }}>
+          🏆 Odoo KAHE Hackathon — Team The Invictus
+        </span>
+
+        <h1 className="text-5xl md:text-7xl font-extrabold leading-tight mb-6">
+          Plan Trips That
+          <br />
+          <span className="gradient-text">Feel Like Magic</span>
         </h1>
 
-        <p className="text-white/80 text-lg md:text-xl max-w-xl mx-auto mb-12 leading-relaxed font-light">
-          Build multi-city itineraries, track your budget, check off your packing list, and share your adventures — all in one place.
+        <p className="text-slate-400 text-lg md:text-xl max-w-2xl mb-10">
+          Traveloop is your all-in-one travel planner — build multi-city itineraries,
+          track budgets, pack smarter, and share adventures with the world.
         </p>
 
-        <div className="flex flex-col sm:flex-row gap-4 justify-center mb-20">
-          <button
-            onClick={() => navigate('/signup')}
-            className="inline-flex items-center gap-3 px-10 py-4 rounded-2xl bg-white text-indigo-700 font-black text-lg hover:-translate-y-1 hover:shadow-[0_20px_40px_rgba(0,0,0,0.2)] transition-all active:scale-95"
-          >
-            Start Planning Free <ArrowRight size={20} />
-          </button>
-          <button
-            onClick={() => navigate('/login')}
-            className="inline-flex items-center gap-3 px-10 py-4 rounded-2xl border-2 border-white/50 text-white font-bold text-lg hover:bg-white/10 hover:border-white transition-all"
-          >
-            Sign In
+        <div className="flex flex-col sm:flex-row gap-4 mb-12">
+          <button onClick={() => navigate('/signup')} className="btn-primary text-base px-8 py-3">
+            Start Planning Free <ArrowRight size={16} />
           </button>
         </div>
 
-        {/* Stats */}
-        <div className="flex gap-12 justify-center">
-          {[['10K+', 'Trips Planned'], ['50+', 'Countries'], ['98%', 'Happy Users']].map(([val, label]) => (
-            <div key={label} className="text-center">
-              <div className="text-3xl font-black text-white">{val}</div>
-              <div className="text-white/60 text-sm mt-1">{label}</div>
+        {/* Live API status badge */}
+        <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-medium border ${
+          dbOk === null  ? 'border-slate-600 text-slate-400' :
+          dbOk           ? 'border-emerald-500/40 text-emerald-400 bg-emerald-500/10' :
+                           'border-red-500/40 text-red-400 bg-red-500/10'
+        }`}>
+          <span className={`w-2 h-2 rounded-full ${
+            dbOk === null ? 'bg-slate-500 animate-pulse' :
+            dbOk          ? 'bg-emerald-400' : 'bg-red-400'
+          }`} />
+          {dbOk === null  ? 'Checking API...' :
+           dbOk           ? '✅ API + MySQL connected — Hello Traveloop!' :
+                            '❌ API unreachable — is the server running?'}
+        </div>
+      </section>
+
+      {/* ── Features ── */}
+      <section className="px-6 pb-24">
+        <div className="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          {features.map(({ icon: Icon, title, desc }) => (
+            <div key={title} className="glass p-6 hover:border-indigo-500/40 transition-all group">
+              <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4"
+                style={{ background: 'rgba(99,102,241,0.15)' }}>
+                <Icon size={20} className="text-indigo-400 group-hover:text-cyan-400 transition-colors" />
+              </div>
+              <h3 className="font-semibold text-white mb-1">{title}</h3>
+              <p className="text-slate-400 text-sm leading-relaxed">{desc}</p>
             </div>
           ))}
         </div>
       </section>
 
-      {/* Features */}
-      <section className="px-6 pb-20 relative z-10">
-        <div className="max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4">
-          {features.map(({ emoji, title, desc }) => (
-            <div key={title} className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-6 hover:-translate-y-1 hover:bg-white/15 transition-all duration-300 group">
-              <div className="text-4xl mb-4 group-hover:scale-110 transition-transform">{emoji}</div>
-              <h3 className="font-bold text-white mb-2 text-sm">{title}</h3>
-              <p className="text-white/60 text-xs leading-relaxed">{desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <footer className="text-center pb-8 text-white/30 text-xs relative z-10">
-        © 2026 Traveloop · Team The Invictus
+      {/* ── Footer ── */}
+      <footer className="text-center py-5 text-slate-600 text-xs border-t border-slate-800">
+        Traveloop · Odoo KAHE Hackathon 2026 · Team The Invictus
       </footer>
     </div>
   );
