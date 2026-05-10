@@ -3,13 +3,13 @@ import { BrowserRouter as Router, Routes, Route, Link, Navigate, useNavigate, us
 import axios from 'axios';
 
 // ── Page imports ───────────────────────────────────────────────
-import LandingPage   from './pages/LandingPage';
+import LandingPage from './pages/LandingPage';
 import DashboardPage from './pages/DashboardPage';
-import BuilderPage   from './pages/BuilderPage';
-import Checklist     from './pages/Checklist';
-import Budget        from './pages/Budget';
-import Notes         from './pages/Notes';
-import SharedTrip    from './pages/SharedTrip';
+import BuilderPage from './pages/BuilderPage';
+import Checklist from './pages/Checklist';
+import Budget from './pages/Budget';
+import Notes from './pages/Notes';
+import SharedTrip from './pages/SharedTrip';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
 // ──────────────────────────────────────────────────────────────
@@ -29,10 +29,10 @@ const ProtectedRoute = ({ children }) => {
 // Login page
 // ──────────────────────────────────────────────────────────────
 function Login() {
-  const [email, setEmail]       = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError]       = useState('');
-  const [loading, setLoading]   = useState(false);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
 
@@ -54,81 +54,81 @@ function Login() {
   };
 
   return (
-    <div className="min-h-screen flex">
-      {/* Left — Branding Panel */}
-      <div className="hidden lg:flex flex-col justify-between w-[45%] p-12 relative">
-        <Link to="/" className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-violet-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-xl">
-            <span className="text-white text-lg">✈️</span>
+    <div className="min-h-screen flex" style={{ background: 'var(--color-bg)' }}>
+      {/* Left — Travel Image */}
+      <div className="hidden lg:block w-[50%] relative">
+        <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=2070&auto=format&fit=crop')" }} />
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-900/90 via-indigo-900/70 to-transparent" />
+        <div className="relative z-10 h-full flex flex-col justify-between p-12">
+          <Link to="/" className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center border border-white/30">
+              <span className="text-lg">✈️</span>
+            </div>
+            <span className="text-2xl font-black text-white">Traveloop</span>
+          </Link>
+          <div>
+            <h2 className="text-5xl font-black text-white leading-tight mb-4">
+              Welcome back,<br/>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-300 to-pink-300">traveler.</span>
+            </h2>
+            <p className="text-white/70 text-lg max-w-sm">Sign in to continue planning your next adventure.</p>
           </div>
-          <span className="text-2xl font-black text-white tracking-tight">Traveloop</span>
-        </Link>
-        <div>
-          <h2 className="text-5xl font-black text-white leading-tight mb-6">
-            Every great journey<br/>
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-violet-300 to-pink-300">starts here.</span>
-          </h2>
-          <p className="text-white/60 text-lg leading-relaxed max-w-sm">
-            Plan, budget, pack and share your adventures — all in one beautiful place.
-          </p>
-        </div>
-        <div className="flex gap-6">
-          {['✅ Packing Lists', '💰 Budget Tracker', '🌍 Public Sharing'].map(f => (
-            <span key={f} className="text-white/50 text-xs font-medium">{f}</span>
-          ))}
+          <div className="flex gap-6">
+            {['✅ Checklists', '💰 Budgets', '🌍 Sharing'].map(f => (
+              <span key={f} className="text-white/50 text-xs font-medium">{f}</span>
+            ))}
+          </div>
         </div>
       </div>
 
       {/* Right — Login Form */}
-      <div className="flex-1 flex items-center justify-center p-8">
-        <div className="w-full max-w-md">
-          <div className="bg-black/40 backdrop-blur-2xl rounded-3xl border border-white/15 p-10 shadow-[0_25px_50px_rgba(0,0,0,0.4)]">
-            <Link to="/" className="flex items-center gap-2 mb-8 lg:hidden">
-              <span className="text-3xl">✈️</span>
-              <span className="text-xl font-black text-white">Traveloop</span>
-            </Link>
+      <div className="flex-1 flex items-center justify-center p-10">
+        <div className="w-full max-w-lg">
+          <Link to="/" className="flex items-center gap-2 mb-10 lg:hidden">
+            <span className="text-3xl">✈️</span>
+            <span className="text-xl font-black text-white">Traveloop</span>
+          </Link>
 
-            <h2 className="text-3xl font-black text-white mb-2">Welcome back</h2>
-            <p className="text-white/50 mb-8">Sign in to continue your journey</p>
+          <h2 className="text-4xl font-black text-white mb-2">Sign in</h2>
+          <p className="text-slate-400 mb-10">Enter your credentials to continue</p>
 
-            {error && (
-              <div className="flex items-center gap-2 bg-red-500/15 text-red-300 border border-red-500/30 p-4 rounded-2xl mb-6 text-sm">
-                <span>⚠️</span> {error}
-              </div>
-            )}
+          {error && (
+            <div className="flex items-center gap-2 bg-red-500/15 text-red-300 border border-red-500/30 p-4 rounded-xl mb-6 text-sm">
+              <span>⚠️</span> {error}
+            </div>
+          )}
 
-            <form onSubmit={handleLogin} className="space-y-5">
-              <div>
-                <label className="block text-white/70 text-sm font-semibold mb-2">Email address</label>
-                <input
-                  type="email" required
-                  className="w-full px-5 py-3.5 rounded-2xl bg-white/8 border border-white/15 text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-violet-500/60 focus:border-violet-500/50 transition-all text-sm"
-                  placeholder="you@example.com"
-                  value={email} onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
-              <div>
-                <label className="block text-white/70 text-sm font-semibold mb-2">Password</label>
-                <input
-                  type="password" required
-                  className="w-full px-5 py-3.5 rounded-2xl bg-white/8 border border-white/15 text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-violet-500/60 focus:border-violet-500/50 transition-all text-sm"
-                  placeholder="Enter your password"
-                  value={password} onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
-              <button
-                type="submit" disabled={loading}
-                className="w-full py-4 rounded-2xl bg-gradient-to-r from-violet-500 to-indigo-500 text-white font-black text-base shadow-xl shadow-violet-500/30 hover:shadow-violet-500/50 hover:-translate-y-0.5 transition-all active:scale-95 disabled:opacity-60 mt-2"
-              >
-                {loading ? 'Signing in...' : 'Sign In →'}
-              </button>
-            </form>
+          <form onSubmit={handleLogin} className="space-y-6">
+            <div>
+              <label className="block text-slate-300 text-sm font-semibold mb-2">Email address</label>
+              <input
+                type="email" required
+                className="w-full px-5 py-4 rounded-xl bg-slate-800/80 border-2 border-slate-600 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
+                placeholder="you@example.com"
+                value={email} onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="block text-slate-300 text-sm font-semibold mb-2">Password</label>
+              <input
+                type="password" required
+                className="w-full px-5 py-4 rounded-xl bg-slate-800/80 border-2 border-slate-600 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
+                placeholder="Enter your password"
+                value={password} onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+            <button
+              type="submit" disabled={loading}
+              className="w-full py-4 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-bold text-base shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 hover:-translate-y-0.5 transition-all active:scale-95 disabled:opacity-60"
+            >
+              {loading ? 'Signing in...' : 'Sign In →'}
+            </button>
+          </form>
 
-            <p className="mt-8 text-center text-white/40 text-sm">
-              New to Traveloop?{' '}
-              <Link to="/signup" className="text-violet-300 font-bold hover:text-violet-200 transition-colors">Create an account</Link>
-            </p>
-          </div>
+          <p className="mt-10 text-center text-slate-500 text-sm">
+            New to Traveloop?{' '}
+            <Link to="/signup" className="text-indigo-400 font-bold hover:text-indigo-300 transition-colors">Create an account</Link>
+          </p>
         </div>
       </div>
     </div>
@@ -139,12 +139,12 @@ function Login() {
 // Signup page
 // ──────────────────────────────────────────────────────────────
 function Signup() {
-  const [name, setName]                   = useState('');
-  const [email, setEmail]                 = useState('');
-  const [password, setPassword]           = useState('');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [error, setError]                 = useState('');
-  const [loading, setLoading]             = useState(false);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
 
@@ -169,99 +169,99 @@ function Signup() {
   };
 
   return (
-    <div className="min-h-screen flex">
-      {/* Left — Branding Panel */}
-      <div className="hidden lg:flex flex-col justify-between w-[45%] p-12 relative">
-        <Link to="/" className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-violet-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-xl">
-            <span className="text-white text-lg">✈️</span>
+    <div className="min-h-screen flex" style={{ background: 'var(--color-bg)' }}>
+      {/* Left — Travel Image */}
+      <div className="hidden lg:block w-[50%] relative">
+        <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=2073&auto=format&fit=crop')" }} />
+        <div className="absolute inset-0 bg-gradient-to-r from-indigo-900/80 via-purple-900/70 to-transparent" />
+        <div className="relative z-10 h-full flex flex-col justify-between p-12">
+          <Link to="/" className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center border border-white/30">
+              <span className="text-lg">✈️</span>
+            </div>
+            <span className="text-2xl font-black text-white">Traveloop</span>
+          </Link>
+          <div>
+            <h2 className="text-5xl font-black text-white leading-tight mb-4">
+              Your next<br/>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-blue-300">adventure awaits.</span>
+            </h2>
+            <p className="text-white/70 text-lg max-w-sm">Join Traveloop and start planning unforgettable trips.</p>
           </div>
-          <span className="text-2xl font-black text-white tracking-tight">Traveloop</span>
-        </Link>
-        <div>
-          <h2 className="text-5xl font-black text-white leading-tight mb-6">
-            Join thousands of<br/>
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-pink-300 to-violet-300">happy travelers.</span>
-          </h2>
-          <p className="text-white/60 text-lg leading-relaxed max-w-sm">
-            Start planning your perfect trip today — it only takes 30 seconds to get started.
-          </p>
-        </div>
-        <div className="flex gap-6">
-          {['🗺️ Itinerary Builder', '📝 Travel Journal', '✈️ Trip Sharing'].map(f => (
-            <span key={f} className="text-white/50 text-xs font-medium">{f}</span>
-          ))}
+          <div className="flex gap-6">
+            {['🗺️ Itineraries', '💰 Budgets', '✅ Checklists', '🌍 Sharing'].map(f => (
+              <span key={f} className="text-white/50 text-xs font-medium">{f}</span>
+            ))}
+          </div>
         </div>
       </div>
 
       {/* Right — Signup Form */}
-      <div className="flex-1 flex items-center justify-center p-8 py-16">
-        <div className="w-full max-w-md">
-          <div className="bg-black/40 backdrop-blur-2xl rounded-3xl border border-white/15 p-10 shadow-[0_25px_50px_rgba(0,0,0,0.4)]">
-            <Link to="/" className="flex items-center gap-2 mb-8 lg:hidden">
-              <span className="text-3xl">✈️</span>
-              <span className="text-xl font-black text-white">Traveloop</span>
-            </Link>
+      <div className="flex-1 flex items-center justify-center p-10 py-16">
+        <div className="w-full max-w-lg">
+          <Link to="/" className="flex items-center gap-2 mb-10 lg:hidden">
+            <span className="text-3xl">✈️</span>
+            <span className="text-xl font-black text-white">Traveloop</span>
+          </Link>
 
-            <h2 className="text-3xl font-black text-white mb-2">Create account</h2>
-            <p className="text-white/50 mb-8">Start your travel journey today</p>
+          <h2 className="text-4xl font-black text-white mb-2">Create your account</h2>
+          <p className="text-slate-400 mb-8">Start your travel journey today</p>
 
-            {error && (
-              <div className="flex items-center gap-2 bg-red-500/15 text-red-300 border border-red-500/30 p-4 rounded-2xl mb-6 text-sm">
-                <span>⚠️</span> {error}
-              </div>
-            )}
+          {error && (
+            <div className="flex items-center gap-2 bg-red-500/15 text-red-300 border border-red-500/30 p-4 rounded-xl mb-6 text-sm">
+              <span>⚠️</span> {error}
+            </div>
+          )}
 
-            <form onSubmit={handleSignup} className="space-y-4">
-              <div>
-                <label className="block text-white/70 text-sm font-semibold mb-2">Full Name</label>
-                <input
-                  type="text" required
-                  className="w-full px-5 py-3.5 rounded-2xl bg-white/8 border border-white/15 text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-pink-500/60 focus:border-pink-500/50 transition-all text-sm"
-                  placeholder="John Doe"
-                  value={name} onChange={(e) => setName(e.target.value)}
-                />
-              </div>
-              <div>
-                <label className="block text-white/70 text-sm font-semibold mb-2">Email address</label>
-                <input
-                  type="email" required
-                  className="w-full px-5 py-3.5 rounded-2xl bg-white/8 border border-white/15 text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-pink-500/60 focus:border-pink-500/50 transition-all text-sm"
-                  placeholder="you@example.com"
-                  value={email} onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
-              <div>
-                <label className="block text-white/70 text-sm font-semibold mb-2">Password</label>
-                <input
-                  type="password" required
-                  className="w-full px-5 py-3.5 rounded-2xl bg-white/8 border border-white/15 text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-pink-500/60 focus:border-pink-500/50 transition-all text-sm"
-                  placeholder="Create a strong password"
-                  value={password} onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
-              <div>
-                <label className="block text-white/70 text-sm font-semibold mb-2">Confirm Password</label>
-                <input
-                  type="password" required
-                  className="w-full px-5 py-3.5 rounded-2xl bg-white/8 border border-white/15 text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-pink-500/60 focus:border-pink-500/50 transition-all text-sm"
-                  placeholder="Repeat your password"
-                  value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}
-                />
-              </div>
-              <button
-                type="submit" disabled={loading}
-                className="w-full py-4 rounded-2xl bg-gradient-to-r from-pink-500 to-violet-500 text-white font-black text-base shadow-xl shadow-pink-500/30 hover:shadow-pink-500/50 hover:-translate-y-0.5 transition-all active:scale-95 disabled:opacity-60 mt-2"
-              >
-                {loading ? 'Creating account...' : 'Create Account →'}
-              </button>
-            </form>
+          <form onSubmit={handleSignup} className="space-y-5">
+            <div>
+              <label className="block text-slate-300 text-sm font-semibold mb-2">Full Name</label>
+              <input
+                type="text" required
+                className="w-full px-5 py-4 rounded-xl bg-slate-800/80 border-2 border-slate-600 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
+                placeholder="John Doe"
+                value={name} onChange={(e) => setName(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="block text-slate-300 text-sm font-semibold mb-2">Email address</label>
+              <input
+                type="email" required
+                className="w-full px-5 py-4 rounded-xl bg-slate-800/80 border-2 border-slate-600 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
+                placeholder="you@example.com"
+                value={email} onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="block text-slate-300 text-sm font-semibold mb-2">Password</label>
+              <input
+                type="password" required
+                className="w-full px-5 py-4 rounded-xl bg-slate-800/80 border-2 border-slate-600 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
+                placeholder="Create a strong password"
+                value={password} onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="block text-slate-300 text-sm font-semibold mb-2">Confirm Password</label>
+              <input
+                type="password" required
+                className="w-full px-5 py-4 rounded-xl bg-slate-800/80 border-2 border-slate-600 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
+                placeholder="Repeat your password"
+                value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+            </div>
+            <button
+              type="submit" disabled={loading}
+              className="w-full py-4 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-bold text-base shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 hover:-translate-y-0.5 transition-all active:scale-95 disabled:opacity-60"
+            >
+              {loading ? 'Creating account...' : 'Create Account →'}
+            </button>
+          </form>
 
-            <p className="mt-8 text-center text-white/40 text-sm">
-              Already have an account?{' '}
-              <Link to="/login" className="text-pink-300 font-bold hover:text-pink-200 transition-colors">Sign in</Link>
-            </p>
-          </div>
+          <p className="mt-10 text-center text-slate-500 text-sm">
+            Already have an account?{' '}
+            <Link to="/login" className="text-indigo-400 font-bold hover:text-indigo-300 transition-colors">Sign in</Link>
+          </p>
         </div>
       </div>
     </div>
@@ -278,60 +278,64 @@ function AppContent() {
   const isAuth = location.pathname === '/login' || location.pathname === '/signup' || location.pathname === '/';
   const path = location.pathname;
 
-  const navLinkClass = (targetPath) => 
-    `flex items-center gap-2 font-semibold transition-all px-3 py-2 rounded-lg text-sm ${
-      path.startsWith(targetPath) 
-        ? 'text-white bg-white/20 shadow-sm ring-1 ring-white/30' 
-        : 'text-white/70 hover:text-white hover:bg-white/10'
+  const navLinkClass = (targetPath) =>
+    `flex items-center gap-2.5 font-bold transition-all px-6 py-3.5 rounded-2xl text-lg ${path.startsWith(targetPath)
+      ? 'text-white bg-gradient-to-r from-indigo-500/20 to-purple-500/20 border border-indigo-500/40 shadow-[0_0_20px_rgba(99,102,241,0.2)]'
+      : 'text-slate-300 hover:text-white hover:bg-white/10 hover:scale-[1.02] hover:shadow-lg hover:shadow-white/5 border border-transparent'
     }`;
 
   return (
     <>
       {!isAuth && (
-        <nav className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-5xl bg-white/15 backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.2)] px-6 py-3.5 rounded-2xl flex items-center justify-between border border-white/25">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 bg-white/20 rounded-xl flex items-center justify-center border border-white/30">
-              <span className="text-sm">✈️</span>
+        <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-10" style={{ background: 'rgba(15,23,42,0.97)', backdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(51,65,85,0.5)', minHeight: '80px', paddingTop: '16px', paddingBottom: '16px' }}>
+          <Link to="/dashboard" className="flex items-center gap-4 hover:scale-105 transition-transform group">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-cyan-500 flex items-center justify-center shadow-[0_0_30px_rgba(99,102,241,0.4)] group-hover:shadow-[0_0_40px_rgba(99,102,241,0.6)] transition-shadow">
+              <span className="text-2xl animate-pulse">✈️</span>
             </div>
-            <span className="font-black text-lg text-white tracking-tight hidden sm:block">Traveloop</span>
-          </div>
-          
-          <div className="flex items-center gap-1">
-            <Link to="/dashboard" className={navLinkClass('/dashboard')}>🏠 <span className="hidden md:inline">Dashboard</span></Link>
-            <Link to="/checklist" className={navLinkClass('/checklist')}>✅ <span className="hidden md:inline">Checklist</span></Link>
-            <Link to="/budget" className={navLinkClass('/budget')}>💰 <span className="hidden md:inline">Budget</span></Link>
-            <Link to="/notes" className={navLinkClass('/notes')}>📝 <span className="hidden md:inline">Journal</span></Link>
-            <Link to="/public/1" className={navLinkClass('/public')}>🌍 <span className="hidden md:inline">Public</span></Link>
+            <span className="font-extrabold text-2xl text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-300 tracking-tight">Traveloop</span>
+          </Link>
+
+          <div className="flex items-center gap-3">
+            <Link to="/dashboard" className={navLinkClass('/dashboard')}>🏠 Dashboard</Link>
+            <Link to="/checklist" className={navLinkClass('/checklist')}>✅ Checklist</Link>
+            <Link to="/budget" className={navLinkClass('/budget')}>💰 Budget</Link>
+            <Link to="/notes" className={navLinkClass('/notes')}>📝 Journal</Link>
+            <Link to="/public/1" className={navLinkClass('/public')}>🌍 Public View</Link>
           </div>
 
-          <button 
-            onClick={() => { logout(); navigate('/login'); }} 
-            className="flex items-center gap-1.5 bg-red-500/80 hover:bg-red-500 text-white px-4 py-2 rounded-xl font-bold transition-all active:scale-95 text-sm border border-red-400/50"
+          <button
+            onClick={() => { logout(); navigate('/login'); }}
+            className="group flex items-center gap-2 px-6 py-3.5 rounded-2xl font-bold text-lg text-white bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 shadow-[0_0_20px_rgba(225,29,72,0.3)] hover:shadow-[0_0_30px_rgba(225,29,72,0.5)] hover:-translate-y-0.5 active:scale-95 transition-all border border-red-400/30"
           >
-            🚪 <span className="hidden sm:inline">Logout</span>
+            <span>Logout</span>
+            <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
           </button>
         </nav>
       )}
-      {/* Vibrant Gradient Background */}
-      <div className="fixed inset-0 z-[-1] bg-gradient-to-br from-violet-600 via-purple-700 to-indigo-800">
-        <div className="absolute top-[-20%] right-[-10%] w-[60%] h-[60%] rounded-full bg-pink-500/20 blur-[120px]"></div>
-        <div className="absolute bottom-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-blue-500/20 blur-[100px]"></div>
+      {/* Background */}
+      <div className="fixed inset-0 z-[-1]" style={{ background: 'var(--color-bg)' }}>
+        <div className="absolute inset-0 bg-cover bg-center bg-fixed" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1488646953014-85cb44e25828?q=80&w=2070&auto=format&fit=crop')" }} />
+        <div className="absolute inset-0 bg-slate-900/85 backdrop-blur-[2px]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(99,102,241,0.2),transparent_60%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(6,182,212,0.15),transparent_60%)]" />
       </div>
 
-      <div className={`animate-fade-in-up ${!isAuth ? "pt-28 pb-10" : ""}`}>
+      <div className="animate-fade-in-up" style={!isAuth ? { paddingTop: '120px', paddingBottom: '40px' } : {}}>
         <Routes>
           {/* Public routes */}
-          <Route path="/"               element={<LandingPage />} />
-          <Route path="/login"          element={<Login />} />
-          <Route path="/signup"         element={<Signup />} />
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
           <Route path="/public/:tripId" element={<SharedTrip />} />
 
           {/* Protected routes */}
-          <Route path="/dashboard"      element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
+          <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
           <Route path="/builder/:tripId" element={<ProtectedRoute><BuilderPage /></ProtectedRoute>} />
-          <Route path="/checklist"      element={<ProtectedRoute><Checklist /></ProtectedRoute>} />
-          <Route path="/budget"         element={<ProtectedRoute><Budget /></ProtectedRoute>} />
-          <Route path="/notes"          element={<ProtectedRoute><Notes /></ProtectedRoute>} />
+          <Route path="/checklist" element={<ProtectedRoute><Checklist /></ProtectedRoute>} />
+          <Route path="/budget" element={<ProtectedRoute><Budget /></ProtectedRoute>} />
+          <Route path="/notes" element={<ProtectedRoute><Notes /></ProtectedRoute>} />
 
           {/* Fallback */}
           <Route path="*" element={<Navigate to="/" replace />} />

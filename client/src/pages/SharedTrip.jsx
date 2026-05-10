@@ -16,18 +16,15 @@ const SharedTrip = () => {
 
   const fetchTrip = async () => {
     try {
-      // For hackathon prototype, we will just use tripId=1 if none is passed via URL
       const idToFetch = tripId || 1; 
       const res = await axios.get(`http://localhost:5000/api/trips/public/${idToFetch}`);
       
       if (res.data && res.data.data) {
-        // Transform backend response into what the frontend expects
         const { trip, stops } = res.data.data;
         setTrip({ ...trip, stops });
       } else {
         setTrip(res.data);
       }
-      
       setLoading(false);
     } catch (err) {
       console.error(err);
@@ -42,130 +39,134 @@ const SharedTrip = () => {
       const idToCopy = tripId || 1;
       const res = await axios.post(`http://localhost:5000/api/trips/copy/${idToCopy}`);
       alert(`Trip copied successfully! New Trip ID: ${res.data.newTripId}`);
-      // Usually would navigate to the new trip dashboard here
-      navigate('/checklist'); 
+      navigate('/dashboard'); 
     } catch (err) {
       console.error(err);
-      alert('Failed to copy trip');
+      alert('Failed to copy trip. You might need to be logged in.');
       setCopying(false);
     }
   };
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center text-pink-600 font-semibold text-xl">Loading Shared Trip...</div>;
+  if (loading) return (
+    <div className="flex flex-col items-center justify-center w-full min-h-[70vh] px-6 text-white">
+      <div className="glass p-12 text-center">
+        <div className="text-6xl mb-4 animate-spin">🌍</div>
+        <p className="text-xl font-bold">Loading Shared Trip...</p>
+      </div>
+    </div>
+  );
 
   if (error) return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 text-center max-w-md">
-        <svg className="w-16 h-16 text-red-400 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-        </svg>
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">Access Denied</h2>
-        <p className="text-gray-600">{error}</p>
+    <div className="flex flex-col items-center justify-center w-full min-h-[70vh] px-6">
+      <div className="glass p-12 text-center max-w-lg w-full">
+        <div className="text-6xl mb-4">🔒</div>
+        <h2 className="text-white font-extrabold text-2xl mb-3">Access Denied</h2>
+        <p className="text-slate-400 mb-6">{error}</p>
+        <button onClick={() => navigate('/')} className="btn-primary px-8 py-3 w-full justify-center">Go Home</button>
       </div>
     </div>
   );
 
   return (
-    <div className="min-h-screen">
-      {/* Hero Section */}
-      <div className="relative h-80 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 flex flex-col items-center justify-center text-white px-4 print:hidden">
-        <div className="absolute inset-0 bg-black/20"></div>
-        <div className="relative z-10 text-center max-w-3xl">
-          <span className="px-4 py-1 bg-white/20 backdrop-blur-md rounded-full text-sm font-semibold uppercase tracking-widest mb-4 inline-block">Public Trip</span>
-          <h1 className="text-5xl font-bold mb-4 tracking-tight shadow-sm">
-            {trip.title ? trip.title.replace(/hackathon/gi, '').trim() : 'Trip'}
-          </h1>
-          <p className="text-lg text-white/90 line-clamp-2">{trip.description || 'No description provided.'}</p>
-        </div>
-      </div>
-
-      <div className="max-w-4xl mx-auto px-4 py-12 -mt-10 relative z-20">
+    <div className="w-full px-4 md:px-8 pb-20">
+      <div className="w-full max-w-7xl mx-auto space-y-8">
         
-        {/* Action Bar - Hidden during print */}
-        <div className="bg-white rounded-2xl shadow-xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4 border border-gray-100 mb-8 print:hidden">
-          <div>
-            <h3 className="text-xl font-bold text-gray-800">Like this itinerary?</h3>
-            <p className="text-gray-500">Copy this trip to your account and customize it!</p>
+        {/* Hero Section */}
+        <div className="glass p-10 relative overflow-hidden text-center rounded-2xl">
+          <div className="absolute inset-0 bg-gradient-to-r from-pink-500/10 via-purple-500/10 to-indigo-500/10" />
+          <div className="relative z-10 max-w-4xl mx-auto">
+            <span className="px-4 py-1.5 bg-white/10 backdrop-blur-md rounded-full text-xs font-bold uppercase tracking-widest text-white mb-6 inline-block border border-white/20">Public Trip</span>
+            <h1 className="text-5xl md:text-6xl font-extrabold text-white mb-4 tracking-tight">
+              {trip.title ? trip.title.replace(/hackathon/gi, '').trim() : 'Trip'}
+            </h1>
+            <p className="text-xl text-slate-300 max-w-2xl mx-auto">{trip.description || 'No description provided.'}</p>
           </div>
-          <button 
-            onClick={handleCopyTrip}
-            disabled={copying}
-            className="px-8 py-4 bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 hover:bg-gradient-to-l text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-indigo-500/40 hover:-translate-y-1 flex items-center gap-3 disabled:opacity-50 disabled:hover:translate-y-0"
-          >
-            {copying ? 'Copying...' : (
-              <>
-                <div className="bg-white/20 p-1.5 rounded-lg">
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                  </svg>
-                </div>
-                Copy Trip
-              </>
-            )}
-          </button>
         </div>
 
-        {/* Itinerary Timeline */}
-        <div className="space-y-8">
-          <h2 className="text-2xl font-bold text-gray-800 px-2">Itinerary Preview</h2>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
-          {(!trip.stops || trip.stops.length === 0) ? (
-            <div className="bg-white p-10 rounded-2xl text-center text-gray-500 border border-gray-100">
-              No stops have been added to this trip yet.
-            </div>
-          ) : (
-            <div className="relative border-l-2 border-purple-200 ml-6 space-y-12 pb-8">
-              {trip.stops.map((stop, idx) => (
-                <div key={stop.id} className="relative pl-8">
-                  {/* Timeline Dot with Pulse Animation for first stop */}
-                  <div className="absolute -left-[11px] top-2 flex h-5 w-5 items-center justify-center">
-                    {idx === 0 && <span className="absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75 animate-ping"></span>}
-                    <span className="relative inline-flex rounded-full h-5 w-5 bg-purple-500 border-4 border-gray-50 shadow-sm"></span>
-                  </div>
-                  
-                  <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                    <div className="flex justify-between items-start mb-4">
-                      <h3 className="text-xl font-bold text-gray-800">{stop.city_name} {stop.country_code && <span className="text-sm font-normal text-gray-400 bg-gray-100 px-2 py-1 rounded"> {stop.country_code}</span>}</h3>
-                      <span className="text-sm font-semibold text-purple-600 bg-purple-50 px-3 py-1 rounded-full">Stop {idx + 1}</span>
-                    </div>
-
-                    {stop.activities && stop.activities.length > 0 ? (
-                      <div className="space-y-3 mt-4 pt-4 border-t border-gray-100">
-                        <h4 className="text-sm font-semibold uppercase text-gray-400 tracking-wider">Activities</h4>
-                        {stop.activities.map(act => (
-                          <div key={act.id} className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
-                            <div className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center text-xl">
-                              {act.category === 'food' ? '🍕' : act.category === 'accommodation' ? '🏨' : act.category === 'transport' ? '✈️' : '📸'}
-                            </div>
-                            <div>
-                              <p className="font-semibold text-gray-800">{act.title}</p>
-                              <p className="text-xs text-gray-500 capitalize">{act.category} • {act.cost > 0 ? `$${act.cost}` : 'Free'}</p>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <p className="text-sm text-gray-400 mt-4 italic">No activities planned.</p>
-                    )}
-                  </div>
+          {/* Main Itinerary */}
+          <div className="lg:col-span-2 space-y-8">
+            <div className="glass p-8">
+              <h2 className="text-2xl font-bold text-white mb-8 border-b border-white/10 pb-4">Itinerary Preview</h2>
+              
+              {(!trip.stops || trip.stops.length === 0) ? (
+                <div className="text-center py-16 text-slate-400">
+                  <div className="text-6xl mb-4 opacity-50">🗺️</div>
+                  <p className="text-lg">No stops have been added to this trip yet.</p>
                 </div>
-              ))}
+              ) : (
+                <div className="relative border-l-2 border-indigo-500/30 ml-6 space-y-12 pb-8">
+                  {trip.stops.map((stop, idx) => (
+                    <div key={stop.id} className="relative pl-10">
+                      <div className="absolute -left-[11px] top-2 flex h-5 w-5 items-center justify-center">
+                        {idx === 0 && <span className="absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75 animate-ping" />}
+                        <span className="relative inline-flex rounded-full h-5 w-5 bg-indigo-500 border-4 border-slate-900 shadow-sm" />
+                      </div>
+                      
+                      <div className="bg-white/5 border border-white/10 p-6 rounded-2xl hover:bg-white/10 transition-colors">
+                        <div className="flex justify-between items-start mb-6">
+                          <div>
+                            <h3 className="text-2xl font-bold text-white mb-1">
+                              {stop.city_name} 
+                              {stop.country_code && <span className="text-sm font-normal text-slate-400 bg-white/10 px-2 py-0.5 rounded ml-3 align-middle">{stop.country_code}</span>}
+                            </h3>
+                          </div>
+                          <span className="text-sm font-semibold text-indigo-300 bg-indigo-500/20 border border-indigo-500/30 px-3 py-1 rounded-full">Stop {idx + 1}</span>
+                        </div>
+
+                        {stop.activities && stop.activities.length > 0 ? (
+                          <div className="space-y-3">
+                            <h4 className="text-xs font-semibold uppercase text-slate-500 tracking-wider mb-4">Activities</h4>
+                            {stop.activities.map(act => (
+                              <div key={act.id} className="flex items-center gap-4 p-4 bg-black/20 rounded-xl border border-white/5 hover:border-white/10 transition-colors">
+                                <div className="w-12 h-12 rounded-xl bg-slate-800 flex items-center justify-center text-2xl shadow-inner">
+                                  {act.category === 'food' ? '🍕' : act.category === 'accommodation' ? '🏨' : act.category === 'transport' ? '✈️' : '📸'}
+                                </div>
+                                <div>
+                                  <p className="font-bold text-slate-200 text-lg">{act.title}</p>
+                                  <p className="text-sm text-slate-400 capitalize">{act.category} &bull; {act.cost > 0 ? `$${act.cost}` : 'Free'}</p>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <p className="text-sm text-slate-500 italic bg-black/10 p-4 rounded-xl">No activities planned.</p>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
-          )}
+          </div>
+
+          {/* Sidebar / Action Bar */}
+          <div className="lg:col-span-1 space-y-6">
+            <div className="glass p-8 sticky top-32">
+              <div className="text-6xl mb-6 text-center">✨</div>
+              <h3 className="text-2xl font-bold text-white mb-3 text-center">Like this itinerary?</h3>
+              <p className="text-slate-400 mb-8 text-center">Copy this trip to your account and customize it for your own adventure!</p>
+              
+              <button 
+                onClick={handleCopyTrip}
+                disabled={copying}
+                className="btn-primary w-full py-4 text-lg justify-center shadow-lg shadow-indigo-500/30 disabled:opacity-50 disabled:shadow-none"
+              >
+                {copying ? 'Copying...' : 'Copy Trip to Dashboard'}
+              </button>
+
+              <button 
+                onClick={() => window.print()}
+                className="w-full mt-4 py-3 rounded-xl bg-white/5 text-white hover:bg-white/10 border border-white/10 transition-all font-semibold"
+              >
+                Print Itinerary
+              </button>
+            </div>
+          </div>
+
         </div>
-
       </div>
-
-      {/* Floating Print Button - Hidden on Print */}
-      <button 
-        onClick={() => window.print()}
-        className="fixed bottom-8 right-8 bg-gray-900 hover:bg-black text-white p-4 rounded-full shadow-2xl transition-transform hover:-translate-y-1 active:scale-95 print:hidden group z-50"
-        title="Print Itinerary"
-      >
-        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-        </svg>
-      </button>
     </div>
   );
 };

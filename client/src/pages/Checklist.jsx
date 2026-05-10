@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const Checklist = () => {
-  // Hardcoded tripId for hackathon prototype
-  const tripId = 1;
+  const [tripId, setTripId] = useState(null);
   const [items, setItems] = useState([]);
   const [newItemName, setNewItemName] = useState('');
   const [newCategory, setNewCategory] = useState('General');
@@ -12,17 +11,35 @@ const Checklist = () => {
 
   const categories = ['General', 'Clothes', 'Toiletries', 'Documents', 'Electronics'];
 
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('traveloop_token') || localStorage.getItem('token');
   const authConfig = { headers: { Authorization: `Bearer ${token}` } };
 
-  useEffect(() => {
-    fetchItems();
+  useEffect(() => { 
+    const initData = async () => {
+      try {
+        const tripsRes = await axios.get('http://localhost:5000/api/trips', authConfig);
+        const trips = tripsRes.data.data?.trips || [];
+        if (trips.length > 0) {
+          const activeTripId = trips[0].id;
+          setTripId(activeTripId);
+          fetchItems(activeTripId);
+        } else {
+          setError('No trips found. Please create a trip first.');
+          setLoading(false);
+        }
+      } catch (err) {
+        console.error(err);
+        const errDetail = err.response ? err.response.data.message : err.message;
+        setError('Error: ' + errDetail);
+        setLoading(false);
+      }
+    };
+    initData();
   }, []);
 
-  const fetchItems = async () => {
+  const fetchItems = async (activeTripId) => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/trips/${tripId}/checklist`, authConfig);
-      // The new backend might return data inside a data object or directly
+      const res = await axios.get(`http://localhost:5000/api/trips/${activeTripId}/checklist`, authConfig);
       setItems(res.data.data ? res.data.data.items : res.data);
       setLoading(false);
     } catch (err) {
@@ -34,52 +51,31 @@ const Checklist = () => {
 
   const handleAddItem = async (e) => {
     e.preventDefault();
-    if (!newItemName.trim()) {
-      setError('Item name cannot be empty.');
-      return;
-    }
+    if (!newItemName.trim()) { setError('Item name cannot be empty.'); return; }
     setError('');
     try {
-      const res = await axios.post(`http://localhost:5000/api/trips/${tripId}/checklist`, {
-        item_name: newItemName,
-        category: newCategory,
-        quantity: 1
-      }, authConfig);
-      
-      // Update with new item from response
+      const res = await axios.post(`http://localhost:5000/api/trips/${tripId}/checklist`, { item_name: newItemName, category: newCategory, quantity: 1 }, authConfig);
       const addedItem = res.data.data ? res.data.data.item : res.data;
       setItems([...items, addedItem]);
       setNewItemName('');
-    } catch (err) {
-      console.error(err);
-      setError('Failed to add item.');
-    }
+    } catch (err) { console.error(err); setError('Failed to add item.'); }
   };
 
   const togglePacked = async (id, currentStatus) => {
     try {
       const newStatus = currentStatus === 1 ? 0 : 1;
-      // Optimistic update
       setItems(items.map(item => item.id === id ? { ...item, is_packed: newStatus } : item));
       await axios.patch(`http://localhost:5000/api/trips/${tripId}/checklist/${id}`, { is_packed: newStatus }, authConfig);
-    } catch (err) {
-      console.error(err);
-      // Revert if error
-      fetchItems();
-    }
+    } catch (err) { console.error(err); fetchItems(); }
   };
 
   const handleDelete = async (id) => {
     try {
       setItems(items.filter(item => item.id !== id));
       await axios.delete(`http://localhost:5000/api/trips/${tripId}/checklist/${id}`, authConfig);
-    } catch (err) {
-      console.error(err);
-      fetchItems();
-    }
+    } catch (err) { console.error(err); fetchItems(); }
   };
 
-  // Group items by category
   const groupedItems = items.reduce((acc, item) => {
     if (!acc[item.category]) acc[item.category] = [];
     acc[item.category].push(item);
@@ -91,117 +87,125 @@ const Checklist = () => {
   const progressPercent = totalItems === 0 ? 0 : Math.round((packedItems / totalItems) * 100);
 
   if (loading) return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="bg-white/20 backdrop-blur-xl rounded-3xl p-10 text-center border border-white/30">
-        <div className="text-5xl mb-4 animate-bounce">✅</div>
+    <div className="min-h-[60vh] flex items-center justify-center">
+      <div className="glass p-12 text-center">
+        <div className="text-6xl mb-4 animate-bounce">✅</div>
         <p className="text-white font-bold text-xl">Loading Checklist...</p>
       </div>
     </div>
   );
 
+  if (error && items.length === 0) return (
+    <div className="flex items-center justify-center h-full min-h-[70vh] px-6">
+      <div className="glass p-12 text-center max-w-lg w-full">
+        <div className="text-6xl mb-4">⚠️</div>
+        <h2 className="text-white font-extrabold text-2xl mb-3">{error.includes('No trips') ? 'No Trips Yet' : 'Could not load checklist'}</h2>
+        <p className="text-slate-400 mb-6">{error}</p>
+        <button onClick={() => window.location.reload()} className="btn-primary px-8 py-3 w-full justify-center">Try Again</button>
+      </div>
+    </div>
+  );
+
   return (
-    <div className="min-h-screen py-10 px-4">
-      <div className="max-w-3xl mx-auto bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/30 overflow-hidden">
+    <div className="w-full px-4 md:px-8 pb-20">
+      <div className="w-full max-w-7xl mx-auto">
+        <div className="glass overflow-hidden">
 
-        {/* Header */}
-        <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-8 text-white relative overflow-hidden">
-          <div className="relative z-10">
-            <h1 className="text-3xl font-bold mb-2 tracking-tight">Packing Checklist</h1>
-            <p className="text-purple-100 opacity-90">Don't forget anything important for your trip.</p>
-          </div>
-          <div className="mt-6 relative z-10">
-            <div className="flex justify-between text-sm font-semibold mb-2">
-              <span>Packing Progress</span>
-              <span>{progressPercent}% ({packedItems}/{totalItems})</span>
-            </div>
-            <div className="h-3 w-full bg-black/20 rounded-full overflow-hidden">
-              <div
-                className={`h-full rounded-full transition-all duration-700 ${progressPercent === 100 ? 'bg-gradient-to-r from-yellow-400 to-amber-500' : 'bg-gradient-to-r from-green-400 to-emerald-400'}`}
-                style={{ width: `${progressPercent}%` }}
-              />
-            </div>
-          </div>
-          {progressPercent === 100 && totalItems > 0 && (
-            <div className="mt-4 p-4 rounded-xl bg-white/20 border border-white/30 text-center animate-celebrate">
-              <span className="text-2xl mr-2">✈️ 🎉</span>
-              <span className="font-bold text-lg">Fully Packed! Ready for takeoff!</span>
-            </div>
-          )}
-          <div className="absolute top-0 right-0 -mr-16 -mt-16 w-48 h-48 rounded-full bg-white opacity-5"></div>
-        </div>
+          {/* Header with Progress */}
+          <div className="p-10 relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6, #a855f7)' }}>
+            <div className="relative z-10 text-white">
+              <h1 className="text-4xl font-extrabold mb-2">Packing Checklist</h1>
+              <p className="text-white/70 text-lg mb-6">Don't forget anything important for your trip.</p>
+              
+              <div className="flex justify-between text-sm font-semibold mb-2">
+                <span>Progress</span>
+                <span>{progressPercent}% ({packedItems}/{totalItems})</span>
+              </div>
+              <div className="h-3 w-full bg-black/20 rounded-full overflow-hidden">
+                <div
+                  className={`h-full rounded-full transition-all duration-700 ${progressPercent === 100 ? 'bg-gradient-to-r from-yellow-400 to-amber-500' : 'bg-gradient-to-r from-emerald-400 to-cyan-400'}`}
+                  style={{ width: `${progressPercent}%` }}
+                />
+              </div>
 
-        {/* Body */}
-        <div className="p-8">
-          {error && <div className="mb-6 p-4 bg-red-50 text-red-600 rounded-xl text-sm border border-red-100">{error}</div>}
-
-          {/* Add Item Form */}
-          <form onSubmit={handleAddItem} className="mb-8 flex flex-col sm:flex-row gap-3">
-            <input
-              type="text"
-              placeholder="What do you need to pack?"
-              className="flex-1 px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-purple-400 focus:ring-2 focus:ring-purple-200 outline-none transition-all text-gray-800 font-medium"
-              value={newItemName}
-              onChange={(e) => setNewItemName(e.target.value)}
-            />
-            <select
-              value={newCategory}
-              onChange={(e) => setNewCategory(e.target.value)}
-              className="px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-purple-400 outline-none bg-white text-gray-700 font-medium"
-            >
-              {categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
-            </select>
-            <button
-              type="submit"
-              className="px-7 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-purple-500/30 hover:-translate-y-0.5 active:scale-95"
-            >
-              Add Item
-            </button>
-          </form>
-
-          {/* Checklist Items */}
-          {Object.keys(groupedItems).length === 0 ? (
-            <div className="text-center py-16 text-gray-400">
-              <div className="text-6xl mb-4">🧳</div>
-              <p className="text-lg font-medium">Your checklist is empty.</p>
-              <p className="text-sm mt-1">Start adding items above!</p>
-            </div>
-          ) : (
-            <div className="space-y-8">
-              {Object.entries(groupedItems).map(([category, catItems]) => (
-                <div key={category}>
-                  <h3 className="text-sm font-bold text-gray-500 uppercase tracking-widest mb-4 flex items-center gap-2">
-                    <span className="flex-1 h-px bg-gray-200"></span>
-                    {category} <span className="text-gray-400 font-normal">({catItems.length})</span>
-                    <span className="flex-1 h-px bg-gray-200"></span>
-                  </h3>
-                  <div className="space-y-2">
-                    {catItems.map((item) => (
-                      <div key={item.id} className="flex items-center justify-between p-4 bg-gray-50 hover:bg-purple-50 rounded-xl group transition-all border border-transparent hover:border-purple-100">
-                        <label className="flex items-center gap-4 cursor-pointer flex-1" onClick={() => togglePacked(item.id, item.is_packed)}>
-                          <div className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${item.is_packed ? 'bg-green-500 border-green-500' : 'border-gray-300 group-hover:border-purple-400'}`}>
-                            {item.is_packed && (
-                              <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                              </svg>
-                            )}
-                          </div>
-                          <span className={`font-medium transition-all ${item.is_packed ? 'text-gray-400 line-through' : 'text-gray-700'}`}>{item.item_name}</span>
-                        </label>
-                        <button
-                          onClick={() => handleDelete(item.id)}
-                          className="opacity-0 group-hover:opacity-100 p-2 text-red-400 hover:text-red-600 transition-all hover:bg-red-50 rounded-lg"
-                        >
-                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                          </svg>
-                        </button>
-                      </div>
-                    ))}
-                  </div>
+              {progressPercent === 100 && totalItems > 0 && (
+                <div className="mt-5 p-4 rounded-xl bg-white/15 border border-white/25 text-center animate-celebrate">
+                  <span className="text-2xl mr-2">✈️ 🎉</span>
+                  <span className="font-bold text-lg">Fully Packed! Ready for takeoff!</span>
                 </div>
-              ))}
+              )}
             </div>
-          )}
+            <div className="absolute top-0 right-0 -mr-20 -mt-20 w-56 h-56 rounded-full bg-white/5" />
+            <div className="absolute bottom-0 left-1/3 -mb-16 w-40 h-40 rounded-full bg-white/5" />
+          </div>
+
+          {/* Body */}
+          <div className="p-10">
+            {error && <div className="mb-6 p-4 bg-red-500/10 text-red-400 rounded-xl text-sm border border-red-500/20">{error}</div>}
+
+            {/* Add Item Form */}
+            <form onSubmit={handleAddItem} className="mb-10 flex flex-col sm:flex-row gap-3">
+              <input
+                type="text"
+                placeholder="What do you need to pack?"
+                className="flex-1 px-5 py-4 rounded-xl bg-white/5 border border-[var(--color-border)] text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
+                value={newItemName}
+                onChange={(e) => setNewItemName(e.target.value)}
+              />
+              <select
+                value={newCategory}
+                onChange={(e) => setNewCategory(e.target.value)}
+                className="px-5 py-4 rounded-xl bg-white/5 border border-[var(--color-border)] text-white focus:outline-none focus:border-indigo-500 transition-all"
+              >
+                {categories.map(cat => <option key={cat} value={cat} style={{ background: '#1e293b' }}>{cat}</option>)}
+              </select>
+              <button type="submit" className="btn-primary px-8 py-4 text-base font-bold">
+                Add Item
+              </button>
+            </form>
+
+            {/* Checklist Items */}
+            {Object.keys(groupedItems).length === 0 ? (
+              <div className="text-center py-20">
+                <div className="text-7xl mb-4 opacity-50">🧳</div>
+                <p className="text-xl font-medium text-slate-300">Your checklist is empty.</p>
+                <p className="text-sm mt-2 text-slate-500">Start adding items above!</p>
+              </div>
+            ) : (
+              <div className="space-y-8">
+                {Object.entries(groupedItems).map(([category, catItems]) => (
+                  <div key={category}>
+                    <h3 className="text-xs font-bold text-slate-500 uppercase tracking-[0.2em] mb-4 flex items-center gap-3">
+                      <span className="flex-1 h-px bg-[var(--color-border)]" />
+                      {category} ({catItems.length})
+                      <span className="flex-1 h-px bg-[var(--color-border)]" />
+                    </h3>
+                    <div className="space-y-2">
+                      {catItems.map((item) => (
+                        <div key={item.id} className="flex items-center justify-between p-4 rounded-xl hover:bg-white/5 group transition-all border border-transparent hover:border-[var(--color-border)]">
+                          <label className="flex items-center gap-4 cursor-pointer flex-1" onClick={() => togglePacked(item.id, item.is_packed)}>
+                            <div className={`w-7 h-7 rounded-lg border-2 flex items-center justify-center transition-all ${item.is_packed ? 'bg-emerald-500 border-emerald-500' : 'border-slate-600 group-hover:border-indigo-400'}`}>
+                              {item.is_packed && (
+                                <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                </svg>
+                              )}
+                            </div>
+                            <span className={`font-medium text-[16px] transition-all ${item.is_packed ? 'text-slate-500 line-through' : 'text-slate-200'}`}>{item.item_name}</span>
+                          </label>
+                          <button onClick={() => handleDelete(item.id)} className="opacity-0 group-hover:opacity-100 p-2 text-red-400 hover:text-red-300 transition-all hover:bg-red-500/10 rounded-lg">
+                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

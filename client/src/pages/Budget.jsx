@@ -3,130 +3,137 @@ import axios from 'axios';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 
 const Budget = () => {
-  const tripId = 1; // Hardcoded for hackathon testing
+  const [tripId, setTripId] = useState(null);
   const [budgetData, setBudgetData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   const COLORS = ['#8b5cf6', '#ec4899', '#3b82f6', '#10b981', '#f59e0b', '#64748b'];
 
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('traveloop_token') || localStorage.getItem('token');
   const authConfig = { headers: { Authorization: `Bearer ${token}` } };
 
-  useEffect(() => {
-    fetchBudget();
+  useEffect(() => { 
+    const initData = async () => {
+      try {
+        const tripsRes = await axios.get('http://localhost:5000/api/trips', authConfig);
+        const trips = tripsRes.data.data?.trips || [];
+        if (trips.length > 0) {
+          const activeTripId = trips[0].id;
+          setTripId(activeTripId);
+          fetchBudget(activeTripId);
+        } else {
+          setError('No trips found. Please create a trip first.');
+          setLoading(false);
+        }
+      } catch (err) {
+        console.error(err);
+        setError('Failed to fetch trips. Please login again.');
+        setLoading(false);
+      }
+    };
+    initData();
   }, []);
 
-  const fetchBudget = async () => {
+  const fetchBudget = async (activeTripId) => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/trips/${tripId}/budget`, authConfig);
-      // The new backend might return data inside a data object
+      const res = await axios.get(`http://localhost:5000/api/trips/${activeTripId}/budget`, authConfig);
       setBudgetData(res.data.data ? res.data.data : res.data);
       setLoading(false);
     } catch (err) {
       console.error(err);
-      setError('Failed to load budget data. Ensure backend is running and you are logged in.');
+      setError('Failed to load budget data.');
       setLoading(false);
     }
   };
 
   if (loading) return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="bg-white/20 backdrop-blur-xl rounded-3xl p-10 text-center border border-white/30">
-        <div className="text-5xl mb-4 animate-bounce">💰</div>
+    <div className="min-h-[60vh] flex items-center justify-center">
+      <div className="glass p-12 text-center">
+        <div className="text-6xl mb-4 animate-bounce">💰</div>
         <p className="text-white font-bold text-xl">Loading Budget...</p>
       </div>
     </div>
   );
 
   if (error) return (
-    <div className="min-h-screen flex items-center justify-center px-4">
-      <div className="bg-white/20 backdrop-blur-xl rounded-3xl p-10 text-center border border-white/30 max-w-md">
-        <div className="text-5xl mb-4">⚠️</div>
-        <h2 className="text-white font-black text-2xl mb-3">Could not load budget</h2>
-        <p className="text-white/70 mb-6">Please make sure you are logged in and the server is running.</p>
-        <button onClick={fetchBudget} className="px-6 py-3 bg-white text-purple-700 font-bold rounded-xl hover:bg-white/90 transition-all">Try Again</button>
+    <div className="flex items-center justify-center h-full min-h-[70vh] px-6">
+      <div className="glass p-12 text-center max-w-lg w-full">
+        <div className="text-6xl mb-4">⚠️</div>
+        <h2 className="text-white font-extrabold text-2xl mb-3">{error.includes('No trips') ? 'No Trips Yet' : 'Could not load budget'}</h2>
+        <p className="text-slate-400 mb-6">{error}</p>
+        <button onClick={() => window.location.reload()} className="btn-primary px-8 py-3 w-full justify-center">Try Again</button>
       </div>
     </div>
   );
 
   return (
-    <div className="min-h-screen py-10 px-4">
-      <div className="max-w-4xl mx-auto space-y-6">
+    <div className="w-full px-4 md:px-8 pb-20">
+      <div className="w-full max-w-7xl mx-auto space-y-8">
         
-        <div className="bg-gradient-to-r from-indigo-600 to-blue-500 p-8 rounded-2xl text-white shadow-lg">
-          <h1 className="text-3xl font-bold mb-2 tracking-tight">Trip Budget & Expenses</h1>
-          <p className="text-indigo-100">Keep track of your spending to avoid surprises.</p>
+        {/* Header */}
+        <div className="glass p-10 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-emerald-500/5" />
+          <div className="relative z-10">
+            <h1 className="text-4xl font-extrabold text-white mb-2">Trip Budget & Expenses</h1>
+            <p className="text-slate-400 text-lg">Keep track of your spending to avoid surprises.</p>
+          </div>
         </div>
-
-        {error && <div className="p-4 bg-red-50 text-red-600 rounded-lg text-sm border border-red-100">{error}</div>}
 
         {budgetData && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             
             {/* Summary Cards */}
             <div className="md:col-span-1 space-y-6">
-              <div className="bg-white/80 backdrop-blur-md p-6 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-white/50 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-indigo-200 group">
-                <h3 className="text-sm font-semibold text-indigo-900/60 uppercase tracking-wider mb-2 group-hover:text-indigo-600 transition-colors">Total Budget</h3>
-                <p className="text-4xl font-bold text-gray-800">
-                  {budgetData.total_budget.toLocaleString()} <span className="text-xl text-gray-400">{budgetData.currency || 'USD'}</span>
+              <div className="glass p-8 hover:border-indigo-500/30 transition-all group">
+                <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 group-hover:text-indigo-400 transition-colors">Total Budget</h3>
+                <p className="text-4xl font-extrabold text-white">
+                  {budgetData.total_budget.toLocaleString()} <span className="text-lg text-slate-500">{budgetData.currency || 'USD'}</span>
                 </p>
               </div>
               
-              <div className="bg-white/80 backdrop-blur-md p-6 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-white/50 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-pink-200 group">
-                <h3 className="text-sm font-semibold text-pink-900/60 uppercase tracking-wider mb-2 group-hover:text-pink-600 transition-colors">Total Spent</h3>
-                <p className="text-4xl font-bold text-pink-500">
-                  {budgetData.total_spent.toLocaleString()} <span className="text-xl text-pink-300">{budgetData.currency || 'USD'}</span>
+              <div className="glass p-8 hover:border-pink-500/30 transition-all group">
+                <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 group-hover:text-pink-400 transition-colors">Total Spent</h3>
+                <p className="text-4xl font-extrabold text-pink-400">
+                  {budgetData.total_spent.toLocaleString()} <span className="text-lg text-pink-400/40">{budgetData.currency || 'USD'}</span>
                 </p>
               </div>
 
-              <div className={`p-6 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] backdrop-blur-md border transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${budgetData.remaining >= 0 ? 'bg-emerald-50/90 border-emerald-200/50 hover:shadow-emerald-500/20' : 'bg-red-50/90 border-red-200/50 hover:shadow-red-500/20'}`}>
-                <h3 className={`text-sm font-semibold uppercase tracking-wider mb-2 ${budgetData.remaining >= 0 ? 'text-emerald-700' : 'text-red-700'}`}>
+              <div className={`glass p-8 transition-all ${budgetData.remaining >= 0 ? 'hover:border-emerald-500/30' : 'hover:border-red-500/30'}`}>
+                <h3 className={`text-xs font-bold uppercase tracking-widest mb-3 ${budgetData.remaining >= 0 ? 'text-emerald-500' : 'text-red-500'}`}>
                   Remaining Balance
                 </h3>
-                <p className={`text-4xl font-bold ${budgetData.remaining >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
-                  {budgetData.remaining.toLocaleString()} <span className="text-xl opacity-70">{budgetData.currency || 'USD'}</span>
+                <p className={`text-4xl font-extrabold ${budgetData.remaining >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                  {budgetData.remaining.toLocaleString()} <span className="text-lg opacity-50">{budgetData.currency || 'USD'}</span>
                 </p>
               </div>
             </div>
 
             {/* Chart */}
-            <div className="md:col-span-2 bg-white/90 backdrop-blur-md p-8 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-white/50 flex flex-col">
-              <h3 className="text-xl font-bold text-gray-800 mb-6">Expenses by Category</h3>
+            <div className="md:col-span-2 glass p-10 flex flex-col">
+              <h3 className="text-xl font-bold text-white mb-6">Expenses by Category</h3>
               {(!budgetData.by_category || budgetData.by_category.length === 0) ? (
-                <div className="flex-1 flex flex-col items-center justify-center text-gray-400 py-12">
-                  <div className="w-24 h-24 mb-4 rounded-full bg-gray-50 flex items-center justify-center">
-                    <span className="text-4xl opacity-50">💸</span>
-                  </div>
-                  <p className="text-lg font-medium text-gray-500">No expenses recorded yet.</p>
+                <div className="flex-1 flex flex-col items-center justify-center text-slate-500 py-16">
+                  <div className="text-6xl mb-4 opacity-50">💸</div>
+                  <p className="text-lg font-medium text-slate-300">No expenses recorded yet.</p>
                   <p className="text-sm mt-1">Add activities to your itinerary to see your chart!</p>
                 </div>
               ) : (
-                <div className="flex-1 min-h-[300px]">
+                <div className="flex-1 min-h-[350px]">
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
-                      <Pie
-                        data={budgetData.by_category}
-                        dataKey="total"
-                        nameKey="category"
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={80}
-                        outerRadius={120}
-                        paddingAngle={5}
-                      >
+                      <Pie data={budgetData.by_category} dataKey="total" nameKey="category" cx="50%" cy="50%" innerRadius={80} outerRadius={130} paddingAngle={5}>
                         {budgetData.by_category.map((entry, index) => (
                           <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                         ))}
                       </Pie>
-                      <Tooltip formatter={(value) => `${value.toLocaleString()} ${budgetData.currency || 'USD'}`} />
+                      <Tooltip formatter={(value) => `${value.toLocaleString()} ${budgetData.currency || 'USD'}`} contentStyle={{ background: '#1e293b', border: '1px solid #334155', borderRadius: '12px', color: '#f1f5f9' }} />
                       <Legend verticalAlign="bottom" height={36} />
                     </PieChart>
                   </ResponsiveContainer>
                 </div>
               )}
             </div>
-
           </div>
         )}
       </div>
