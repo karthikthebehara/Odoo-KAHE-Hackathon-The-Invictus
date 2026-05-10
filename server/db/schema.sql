@@ -4,6 +4,9 @@
 --  Created : 2026-05-10
 -- =============================================================
 
+CREATE DATABASE IF NOT EXISTS odoo_hackathon;
+USE odoo_hackathon;
+
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- -------------------------------------------------------------
