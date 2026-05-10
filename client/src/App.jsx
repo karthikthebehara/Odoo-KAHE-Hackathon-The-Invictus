@@ -10,13 +10,19 @@ import Checklist     from './pages/Checklist';
 import Budget        from './pages/Budget';
 import Notes         from './pages/Notes';
 import SharedTrip    from './pages/SharedTrip';
+import { AuthProvider, useAuth } from './context/AuthContext';
 
 // ──────────────────────────────────────────────────────────────
 // Auth guard — checks for JWT in localStorage
 // ──────────────────────────────────────────────────────────────
 const ProtectedRoute = ({ children }) => {
-  const token = localStorage.getItem('traveloop_token') || localStorage.getItem('token');
-  return token ? children : <Navigate to="/" replace />;
+  const { isAuthenticated, isLoading } = useAuth();
+
+  if (isLoading) {
+    return <div className="min-h-screen flex items-center justify-center text-white">Loading...</div>;
+  }
+
+  return isAuthenticated ? children : <Navigate to="/login" replace />;
 };
 
 // ──────────────────────────────────────────────────────────────
@@ -27,14 +33,14 @@ function Login() {
   const [password, setPassword] = useState('');
   const [error, setError]       = useState('');
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
       const response = await axios.post('http://localhost:5000/api/auth/login', { email, password });
       if (response.data?.token) {
-        localStorage.setItem('traveloop_token', response.data.token);
-        localStorage.setItem('traveloop_user', JSON.stringify(response.data.data?.user));
+        login(response.data.token, response.data.data?.user);
       }
       navigate('/dashboard');
     } catch (err) {
@@ -97,6 +103,7 @@ function Signup() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError]                 = useState('');
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleSignup = async (e) => {
     e.preventDefault();
@@ -104,8 +111,7 @@ function Signup() {
     try {
       const response = await axios.post('http://localhost:5000/api/auth/register', { name, email, password });
       if (response.data?.token) {
-        localStorage.setItem('traveloop_token', response.data.token);
-        localStorage.setItem('traveloop_user', JSON.stringify(response.data.data?.user));
+        login(response.data.token, response.data.data?.user);
       }
       navigate('/dashboard');
     } catch (err) {
@@ -185,6 +191,8 @@ function Signup() {
 // ──────────────────────────────────────────────────────────────
 function AppContent() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { logout } = useAuth();
   const isAuth = location.pathname === '/login' || location.pathname === '/signup' || location.pathname === '/';
   const path = location.pathname;
 
@@ -213,7 +221,7 @@ function AppContent() {
           </div>
 
           <button 
-            onClick={() => { localStorage.clear(); window.location.href='/login' }} 
+            onClick={() => { logout(); navigate('/login'); }} 
             className="flex items-center gap-2 text-red-500 hover:text-white hover:bg-red-500 px-4 py-2 rounded-xl font-bold transition-all active:scale-95 shadow-sm"
           >
             🚪 <span className="hidden md:inline">Logout</span>
@@ -260,7 +268,9 @@ function AppContent() {
 function App() {
   return (
     <Router>
-      <AppContent />
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
     </Router>
   );
 }
