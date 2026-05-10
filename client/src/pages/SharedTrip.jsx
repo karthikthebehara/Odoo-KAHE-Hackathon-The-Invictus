@@ -72,7 +72,9 @@ const SharedTrip = () => {
         <div className="absolute inset-0 bg-black/20"></div>
         <div className="relative z-10 text-center max-w-3xl">
           <span className="px-4 py-1 bg-white/20 backdrop-blur-md rounded-full text-sm font-semibold uppercase tracking-widest mb-4 inline-block">Public Trip</span>
-          <h1 className="text-5xl font-bold mb-4 tracking-tight shadow-sm">{trip.title}</h1>
+          <h1 className="text-5xl font-bold mb-4 tracking-tight shadow-sm">
+            {trip.title ? trip.title.replace(/hackathon/gi, '').trim() : 'Trip'}
+          </h1>
           <p className="text-lg text-white/90 line-clamp-2">{trip.description || 'No description provided.'}</p>
         </div>
       </div>

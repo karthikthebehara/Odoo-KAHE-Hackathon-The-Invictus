@@ -79,7 +79,7 @@ const Notes = () => {
         <div className="mb-12 relative group flex justify-between items-start">
           <div>
             <h1 className="text-5xl font-bold tracking-tight outline-none" contentEditable suppressContentEditableWarning>
-              {title} <span className="opacity-80">Journal</span>
+              {title ? title.replace(/hackathon/gi, '').trim() : 'Trip'} <span className="opacity-80">Journal</span>
             </h1>
             <div className="h-1 w-24 bg-gradient-to-r from-blue-500 to-indigo-500 mt-6 rounded-full"></div>
           </div>
