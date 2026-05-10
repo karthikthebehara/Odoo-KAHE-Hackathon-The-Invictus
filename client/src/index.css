@@ -1,7 +1,7 @@
-@import "tailwindcss";
-
-/* ── Google Fonts ──────────────────────────────────────────── */
+/* ── Google Fonts — must be first ──────────────────────────── */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+@import "tailwindcss";
 
 /* ── CSS Custom Properties (Design Tokens) ─────────────────── */
 :root {
@@ -22,12 +22,6 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 html { scroll-behavior: smooth; }
-
-@layer base {
-  body {
-    @apply bg-gray-50 text-gray-900 font-sans antialiased;
-  }
-}
 
 body {
   font-family: 'Inter', system-ui, sans-serif;
