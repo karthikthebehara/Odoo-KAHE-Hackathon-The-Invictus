@@ -312,15 +312,11 @@ function AppContent() {
           </button>
         </nav>
       )}
-      {/* Advanced Cinematic Travel Background */}
-      <div className="fixed inset-0 z-[-1]">
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=2074&auto=format&fit=crop')" }}
-        ></div>
-        {/* Dark Glassmorphism Overlay */}
-        <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-[2px]"></div>
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-slate-900/10 to-slate-900/80"></div>
+      {/* Solid Premium Gradient Background - always works */}
+      <div className="fixed inset-0 z-[-1] bg-gradient-to-br from-slate-900 via-indigo-950 to-purple-950">
+        <div className="absolute top-0 left-[-10%] w-[50%] h-[50%] rounded-full bg-indigo-600/20 blur-[120px]"></div>
+        <div className="absolute bottom-0 right-[-10%] w-[50%] h-[50%] rounded-full bg-purple-600/20 blur-[120px]"></div>
+        <div className="absolute top-[30%] right-[20%] w-[30%] h-[30%] rounded-full bg-pink-600/10 blur-[80px]"></div>
       </div>
 
       <div className={`animate-fade-in-up ${!isAuth ? "pt-28 pb-10" : ""}`}>
