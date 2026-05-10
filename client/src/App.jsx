@@ -34,28 +34,31 @@ function Login() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-4">
-      <div className="bg-white/90 backdrop-blur-md p-8 rounded-2xl shadow-2xl w-full max-w-md border border-white/20">
-        <h2 className="text-3xl font-bold text-gray-800 text-center mb-8 tracking-tight">Welcome Back</h2>
-        {error && <div className="bg-red-100 text-red-600 p-3 rounded-lg mb-4 text-sm text-center">{error}</div>}
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="bg-black/30 backdrop-blur-2xl p-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.3)] w-full max-w-md border border-white/20">
+        <div className="flex justify-center mb-4">
+          <span className="text-4xl drop-shadow-md">✈️</span>
+        </div>
+        <h2 className="text-3xl font-bold text-white text-center mb-8 tracking-tight">Welcome Back</h2>
+        {error && <div className="bg-red-500/20 text-red-200 border border-red-500/50 p-3 rounded-xl mb-4 text-sm text-center backdrop-blur-sm">{error}</div>}
         <form onSubmit={handleLogin} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <label className="block text-sm font-medium text-white/90 mb-2">Email</label>
             <input 
               type="email" 
               required
-              className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all"
+              className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/50 focus:ring-2 focus:ring-purple-400 focus:border-transparent outline-none transition-all shadow-inner"
               placeholder="you@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+            <label className="block text-sm font-medium text-white/90 mb-2">Password</label>
             <input 
               type="password" 
               required
-              className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all"
+              className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/50 focus:ring-2 focus:ring-purple-400 focus:border-transparent outline-none transition-all shadow-inner"
               placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -63,13 +66,13 @@ function Login() {
           </div>
           <button 
             type="submit" 
-            className="w-full py-3 px-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold rounded-xl hover:opacity-90 transition-opacity shadow-lg shadow-purple-500/30"
+            className="w-full py-3.5 px-4 bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-bold rounded-xl hover:from-purple-400 hover:to-indigo-400 transition-all shadow-[0_0_15px_rgba(168,85,247,0.4)] hover:shadow-[0_0_25px_rgba(168,85,247,0.6)] hover:-translate-y-0.5 active:scale-95"
           >
             Sign In
           </button>
         </form>
-        <p className="mt-6 text-center text-gray-600">
-          Don't have an account? <Link to="/signup" className="text-purple-600 font-semibold hover:underline">Sign up</Link>
+        <p className="mt-8 text-center text-white/70">
+          Don't have an account? <Link to="/signup" className="text-purple-300 font-bold hover:text-purple-200 hover:underline transition-colors">Sign up</Link>
         </p>
       </div>
     </div>
@@ -112,50 +115,53 @@ function Signup() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-500 via-purple-500 to-indigo-500 p-4">
-      <div className="bg-white/90 backdrop-blur-md p-8 rounded-2xl shadow-2xl w-full max-w-md border border-white/20">
-        <h2 className="text-3xl font-bold text-gray-800 text-center mb-8 tracking-tight">Create Account</h2>
-        {error && <div className="bg-red-100 text-red-600 p-3 rounded-lg mb-4 text-sm text-center">{error}</div>}
-        <form onSubmit={handleSignup} className="space-y-6">
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="bg-black/30 backdrop-blur-2xl p-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.3)] w-full max-w-md border border-white/20 my-8">
+        <div className="flex justify-center mb-4">
+          <span className="text-4xl drop-shadow-md">✈️</span>
+        </div>
+        <h2 className="text-3xl font-bold text-white text-center mb-8 tracking-tight">Create Account</h2>
+        {error && <div className="bg-red-500/20 text-red-200 border border-red-500/50 p-3 rounded-xl mb-4 text-sm text-center backdrop-blur-sm">{error}</div>}
+        <form onSubmit={handleSignup} className="space-y-5">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+            <label className="block text-sm font-medium text-white/90 mb-1.5">Full Name</label>
             <input 
               type="text" 
               required
-              className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all"
+              className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/50 focus:ring-2 focus:ring-pink-400 focus:border-transparent outline-none transition-all shadow-inner"
               placeholder="John Doe"
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <label className="block text-sm font-medium text-white/90 mb-1.5">Email</label>
             <input 
               type="email" 
               required
-              className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all"
+              className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/50 focus:ring-2 focus:ring-pink-400 focus:border-transparent outline-none transition-all shadow-inner"
               placeholder="you@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+            <label className="block text-sm font-medium text-white/90 mb-1.5">Password</label>
             <input 
               type="password" 
               required
-              className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all"
+              className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/50 focus:ring-2 focus:ring-pink-400 focus:border-transparent outline-none transition-all shadow-inner"
               placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
+            <label className="block text-sm font-medium text-white/90 mb-1.5">Confirm Password</label>
             <input 
               type="password" 
               required
-              className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all"
+              className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/50 focus:ring-2 focus:ring-pink-400 focus:border-transparent outline-none transition-all shadow-inner"
               placeholder="••••••••"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
@@ -163,13 +169,13 @@ function Signup() {
           </div>
           <button 
             type="submit" 
-            className="w-full py-3 px-4 bg-gradient-to-r from-pink-600 to-purple-600 text-white font-semibold rounded-xl hover:opacity-90 transition-opacity shadow-lg shadow-pink-500/30"
+            className="w-full py-3.5 px-4 bg-gradient-to-r from-pink-500 to-purple-500 text-white font-bold rounded-xl hover:from-pink-400 hover:to-purple-400 transition-all shadow-[0_0_15px_rgba(236,72,153,0.4)] hover:shadow-[0_0_25px_rgba(236,72,153,0.6)] hover:-translate-y-0.5 active:scale-95 mt-8"
           >
-            Sign Up
+            Create Account
           </button>
         </form>
-        <p className="mt-6 text-center text-gray-600">
-          Already have an account? <Link to="/" className="text-purple-600 font-semibold hover:underline">Log in</Link>
+        <p className="mt-8 text-center text-white/70">
+          Already have an account? <Link to="/" className="text-pink-300 font-bold hover:text-pink-200 hover:underline transition-colors">Sign in</Link>
         </p>
       </div>
     </div>
