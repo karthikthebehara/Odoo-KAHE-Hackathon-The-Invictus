@@ -54,11 +54,6 @@ export default function LandingPage() {
           style={{ background: 'radial-gradient(circle, #6366f1, #06b6d4)', top: '10%', left: '50%', transform: 'translateX(-50%)' }}
         />
 
-        <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold mb-6 border border-indigo-500/40 text-indigo-300"
-          style={{ background: 'rgba(99,102,241,0.1)' }}>
-          🏆 Odoo KAHE Hackathon — Team The Invictus
-        </span>
-
         <h1 className="text-5xl md:text-7xl font-extrabold leading-tight mb-6">
           Plan Trips That
           <br />
@@ -76,20 +71,6 @@ export default function LandingPage() {
           </button>
         </div>
 
-        {/* Live API status badge */}
-        <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-medium border ${
-          dbOk === null  ? 'border-slate-600 text-slate-400' :
-          dbOk           ? 'border-emerald-500/40 text-emerald-400 bg-emerald-500/10' :
-                           'border-red-500/40 text-red-400 bg-red-500/10'
-        }`}>
-          <span className={`w-2 h-2 rounded-full ${
-            dbOk === null ? 'bg-slate-500 animate-pulse' :
-            dbOk          ? 'bg-emerald-400' : 'bg-red-400'
-          }`} />
-          {dbOk === null  ? 'Checking API...' :
-           dbOk           ? '✅ API + MySQL connected — Hello Traveloop!' :
-                            '❌ API unreachable — is the server running?'}
-        </div>
       </section>
 
       {/* ── Features ── */}
@@ -110,7 +91,7 @@ export default function LandingPage() {
 
       {/* ── Footer ── */}
       <footer className="text-center py-5 text-slate-600 text-xs border-t border-slate-800">
-        Traveloop · Odoo KAHE Hackathon 2026 · Team The Invictus
+        Traveloop · Odoo KAHE 2026 · Team The Invictus
       </footer>
     </div>
   );
