@@ -91,7 +91,6 @@ export default function LandingPage() {
 
       {/* ── Footer ── */}
       <footer className="text-center py-5 text-slate-600 text-xs border-t border-slate-800">
-        Traveloop · Odoo KAHE 2026 · Team The Invictus
       </footer>
     </div>
   );
