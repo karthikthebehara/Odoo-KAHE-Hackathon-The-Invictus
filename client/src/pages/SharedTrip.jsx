@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api/axios';
 import { useParams, useNavigate } from 'react-router-dom';
 
 const SharedTrip = () => {
@@ -13,7 +13,7 @@ const SharedTrip = () => {
   async function fetchTrip() {
     try {
       const idToFetch = tripId || 1; 
-      const res = await axios.get(`http://localhost:5000/api/trips/public/${idToFetch}`);
+      const res = await api.get(`/trips/public/${idToFetch}`);
       
       if (res.data && res.data.data) {
         const { trip, stops } = res.data.data;
@@ -38,7 +38,7 @@ const SharedTrip = () => {
     setCopying(true);
     try {
       const idToCopy = tripId || 1;
-      const res = await axios.post(`http://localhost:5000/api/trips/copy/${idToCopy}`);
+      const res = await api.post(`/trips/copy/${idToCopy}`);
       alert(`Trip copied successfully! New Trip ID: ${res.data.newTripId}`);
       navigate('/dashboard'); 
     } catch (err) {

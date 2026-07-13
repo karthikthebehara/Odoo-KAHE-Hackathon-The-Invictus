@@ -1,21 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api/axios';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 
 const Budget = () => {
   const [tripId, setTripId] = useState(null);
+  const [trips, setTrips] = useState([]);
   const [budgetData, setBudgetData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   const COLORS = ['#8b5cf6', '#ec4899', '#3b82f6', '#10b981', '#f59e0b', '#64748b'];
 
-  const token = localStorage.getItem('traveloop_token') || localStorage.getItem('token');
-  const authConfig = { headers: { Authorization: `Bearer ${token}` } };
-
   async function fetchBudget(activeTripId) {
     try {
-      const res = await axios.get(`http://localhost:5000/api/trips/${activeTripId}/budget`, authConfig);
+      const res = await api.get(`/trips/${activeTripId}/budget`);
       setBudgetData(res.data.data ? res.data.data : res.data);
       setLoading(false);
     } catch (err) {
@@ -28,10 +26,11 @@ const Budget = () => {
   useEffect(() => { 
     const initData = async () => {
       try {
-        const tripsRes = await axios.get('http://localhost:5000/api/trips', authConfig);
-        const trips = tripsRes.data.data?.trips || [];
-        if (trips.length > 0) {
-          const activeTripId = trips[0].id;
+        const tripsRes = await api.get('/trips');
+        const fetchedTrips = tripsRes.data.data?.trips || [];
+        setTrips(fetchedTrips);
+        if (fetchedTrips.length > 0) {
+          const activeTripId = fetchedTrips[0].id;
           setTripId(activeTripId);
           fetchBudget(activeTripId);
         } else {
@@ -75,9 +74,31 @@ const Budget = () => {
         {/* Header */}
         <div className="glass p-10 relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-emerald-500/5" />
-          <div className="relative z-10">
-            <h1 className="text-4xl font-extrabold text-white mb-2">Trip Budget & Expenses</h1>
-            <p className="text-slate-400 text-lg">Keep track of your spending to avoid surprises.</p>
+          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div>
+              <h1 className="text-4xl font-extrabold text-white mb-2">Trip Budget & Expenses</h1>
+              <p className="text-slate-400 text-lg">Keep track of your spending to avoid surprises.</p>
+            </div>
+            {trips.length > 0 && (
+              <div className="flex flex-col gap-1.5 flex-shrink-0">
+                <label className="text-slate-400 text-xs font-bold uppercase tracking-wider">Select Trip</label>
+                <select
+                  value={tripId || ''}
+                  onChange={(e) => {
+                    const id = parseInt(e.target.value, 10);
+                    setTripId(id);
+                    fetchBudget(id);
+                  }}
+                  className="px-5 py-3 rounded-xl bg-slate-800/90 border border-slate-600 text-white text-sm font-bold focus:outline-none focus:border-indigo-500 transition-all cursor-pointer shadow-lg hover:border-slate-500"
+                >
+                  {trips.map(t => (
+                    <option key={t.id} value={t.id} className="bg-slate-900 text-white">
+                      {t.title}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
           </div>
         </div>
 

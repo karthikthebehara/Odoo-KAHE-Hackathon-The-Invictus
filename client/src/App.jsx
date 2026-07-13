@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
+import api from './api/axios';
 
 // ── Page imports ───────────────────────────────────────────────
 import LandingPage        from './pages/LandingPage';
@@ -30,6 +31,16 @@ const ProtectedRoute = ({ children }) => {
   return isAuthenticated ? children : <Navigate to="/login" replace />;
 };
 
+const AdminRoute = ({ children }) => {
+  const { isAuthenticated, user, isLoading } = useAuth();
+
+  if (isLoading) {
+    return <div className="min-h-screen flex items-center justify-center text-white">Loading...</div>;
+  }
+
+  return isAuthenticated && user?.role === 'admin' ? children : <Navigate to="/dashboard" replace />;
+};
+
 // ──────────────────────────────────────────────────────────────
 // Login page
 // ──────────────────────────────────────────────────────────────
@@ -45,7 +56,7 @@ function Login() {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/login', { email, password });
+      const response = await api.post('/auth/login', { email, password });
       if (response.data?.token) {
         login(response.data.token, response.data.data?.user);
       }
@@ -158,7 +169,7 @@ function Signup() {
     if (password !== confirmPassword) { setError('Passwords do not match'); return; }
     setLoading(true);
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/register', { name, email, password });
+      const response = await api.post('/auth/register', { name, email, password });
       if (response.data?.token) {
         login(response.data.token, response.data.data?.user);
       }
@@ -306,7 +317,9 @@ function AppContent() {
             <Link to="/checklist"   className={navLinkClass('/checklist')}>✅ Checklist</Link>
             <Link to="/budget"      className={navLinkClass('/budget')}>💰 Budget</Link>
             <Link to="/notes"       className={navLinkClass('/notes')}>📝 Journal</Link>
-            <Link to="/admin"       className={navLinkClass('/admin')}>📊 Admin</Link>
+            {user?.role === 'admin' && (
+              <Link to="/admin"       className={navLinkClass('/admin')}>📊 Admin</Link>
+            )}
           </div>
 
           <div className="flex items-center gap-2 flex-shrink-0">
@@ -364,7 +377,7 @@ function AppContent() {
           <Route path="/budget"               element={<ProtectedRoute><Budget /></ProtectedRoute>} />
           <Route path="/notes"                element={<ProtectedRoute><Notes /></ProtectedRoute>} />
           <Route path="/profile"              element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
-          <Route path="/admin"                element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
+          <Route path="/admin"                element={<ProtectedRoute><AdminRoute><AdminPage /></AdminRoute></ProtectedRoute>} />
 
           {/* Fallback */}
           <Route path="*" element={<Navigate to="/" replace />} />

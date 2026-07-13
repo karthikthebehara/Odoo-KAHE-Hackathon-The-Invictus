@@ -26,7 +26,7 @@ const protect = async (req, res, next) => {
 
     // 3. Confirm user still exists in DB (handles deleted / suspended accounts)
     const [rows] = await pool.execute(
-      'SELECT id, name, email, avatar_url FROM users WHERE id = ? LIMIT 1',
+      'SELECT id, name, email, avatar_url, role FROM users WHERE id = ? LIMIT 1',
       [decoded.id]
     );
 
@@ -50,4 +50,23 @@ const protect = async (req, res, next) => {
   }
 };
 
-module.exports = { protect };
+/**
+ * adminOnly — Express middleware
+ *
+ * Pre-requisite: Must be mounted AFTER protect middleware.
+ * Expects: req.user contains role
+ * On pass: calls next()
+ * On fail: returns 403 JSON error
+ */
+const adminOnly = (req, res, next) => {
+  if (req.user && req.user.role === 'admin') {
+    next();
+  } else {
+    return res.status(403).json({
+      status:  'fail',
+      message: 'Access denied. Administrator privileges required.',
+    });
+  }
+};
+
+module.exports = { protect, adminOnly };

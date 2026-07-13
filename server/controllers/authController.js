@@ -24,8 +24,8 @@ const signToken = (userId) =>
   );
 
 // ── Helper: Safe user response (strip password_hash) ──────────
-const sanitizeUser = ({ id, name, email, avatar_url, created_at }) => ({
-  id, name, email, avatar_url, created_at,
+const sanitizeUser = ({ id, name, email, avatar_url, role, created_at }) => ({
+  id, name, email, avatar_url, role, created_at,
 });
 
 // ──────────────────────────────────────────────────────────────

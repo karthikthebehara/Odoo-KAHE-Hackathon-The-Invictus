@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api/axios';
 
 const Checklist = () => {
   const [tripId, setTripId] = useState(null);
@@ -11,12 +11,9 @@ const Checklist = () => {
 
   const categories = ['General', 'Clothes', 'Toiletries', 'Documents', 'Electronics'];
 
-  const token = localStorage.getItem('traveloop_token') || localStorage.getItem('token');
-  const authConfig = { headers: { Authorization: `Bearer ${token}` } };
-
   async function fetchItems(activeTripId) {
     try {
-      const res = await axios.get(`http://localhost:5000/api/trips/${activeTripId}/checklist`, authConfig);
+      const res = await api.get(`/trips/${activeTripId}/checklist`);
       setItems(res.data.data ? res.data.data.items : res.data);
       setLoading(false);
     } catch (err) {
@@ -29,7 +26,7 @@ const Checklist = () => {
   useEffect(() => { 
     const initData = async () => {
       try {
-        const tripsRes = await axios.get('http://localhost:5000/api/trips', authConfig);
+        const tripsRes = await api.get('/trips');
         const trips = tripsRes.data.data?.trips || [];
         if (trips.length > 0) {
           const activeTripId = trips[0].id;
@@ -55,7 +52,7 @@ const Checklist = () => {
     if (!newItemName.trim()) { setError('Item name cannot be empty.'); return; }
     setError('');
     try {
-      const res = await axios.post(`http://localhost:5000/api/trips/${tripId}/checklist`, { item_name: newItemName, category: newCategory, quantity: 1 }, authConfig);
+      const res = await api.post(`/trips/${tripId}/checklist`, { item_name: newItemName, category: newCategory, quantity: 1 });
       const addedItem = res.data.data ? res.data.data.item : res.data;
       setItems([...items, addedItem]);
       setNewItemName('');
@@ -66,14 +63,14 @@ const Checklist = () => {
     try {
       const newStatus = currentStatus === 1 ? 0 : 1;
       setItems(items.map(item => item.id === id ? { ...item, is_packed: newStatus } : item));
-      await axios.patch(`http://localhost:5000/api/trips/${tripId}/checklist/${id}`, { is_packed: newStatus }, authConfig);
+      await api.patch(`/trips/${tripId}/checklist/${id}`, { is_packed: newStatus });
     } catch (err) { console.error(err); fetchItems(); }
   };
 
   const handleDelete = async (id) => {
     try {
       setItems(items.filter(item => item.id !== id));
-      await axios.delete(`http://localhost:5000/api/trips/${tripId}/checklist/${id}`, authConfig);
+      await api.delete(`/trips/${tripId}/checklist/${id}`);
     } catch (err) { console.error(err); fetchItems(); }
   };
 

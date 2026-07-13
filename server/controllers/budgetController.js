@@ -79,8 +79,8 @@ const getBudgetSummary = async (req, res) => {
         remaining,
         pct_used:     pctUsed,
         over_budget:  remaining < 0,
-        by_category:  byCategory,
-        by_city:      byCity,
+        by_category:  byCategory.map(c => ({ ...c, total: parseFloat(c.total) })),
+        by_city:      byCity.map(c => ({ ...c, total: parseFloat(c.total) })),
       },
     });
   } catch (err) {
