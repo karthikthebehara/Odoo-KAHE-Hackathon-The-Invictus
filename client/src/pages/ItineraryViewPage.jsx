@@ -133,7 +133,7 @@ export default function ItineraryViewPage() {
               {[
                 { icon: <MapPin size={16} />, label: `${stops.length} Cit${stops.length !== 1 ? 'ies' : 'y'}` },
                 { icon: <Calendar size={16} />, label: trip.start_date ? `${fmt(trip.start_date)}${trip.end_date ? ` → ${fmt(trip.end_date)}` : ''}` : 'Dates TBD' },
-                { icon: <DollarSign size={16} />, label: `${totalActivities} Activit${totalActivities !== 1 ? 'ies' : 'y'}` },
+                { icon: <Clock size={16} />, label: `${totalActivities} Activit${totalActivities !== 1 ? 'ies' : 'y'}` },
                 { icon: <DollarSign size={16} />, label: `Est. $${totalCost.toFixed(0)} spent` },
                 { icon: isPublic ? <Globe size={16} /> : <Lock size={16} />, label: trip.sharing_status },
               ].map(({ icon, label }, i) => (

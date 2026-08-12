@@ -201,16 +201,11 @@ export default function MyTripsPage() {
 
                     {/* Budget bar */}
                     {trip.total_budget > 0 && (
-                      <div className="mb-4">
-                        <div className="flex justify-between text-xs text-slate-500 mb-1">
-                          <span className="flex items-center gap-1"><TrendingUp size={10} /> Budget</span>
-                          <span className="font-semibold text-slate-300">
-                            {trip.currency || 'USD'} {Number(trip.total_budget).toLocaleString()}
-                          </span>
-                        </div>
-                        <div className="h-1 bg-slate-700 rounded-full">
-                          <div className="h-1 bg-gradient-to-r from-indigo-500 to-cyan-500 rounded-full w-1/3" />
-                        </div>
+                      <div className="mb-4 flex items-center justify-between text-xs text-slate-400">
+                        <span className="flex items-center gap-1"><TrendingUp size={10} /> Budget</span>
+                        <span className="font-semibold text-slate-300">
+                          {trip.currency || 'USD'} {Number(trip.total_budget).toLocaleString()}
+                        </span>
                       </div>
                     )}
 

@@ -148,7 +148,7 @@ export default function NotesPage() {
             <div className="relative w-full md:w-64">
               <select
                 value={selectedTripId || ''}
-                onChange={(e) => setSelectedTripId(e.target.value)}
+                onChange={(e) => { setSelectedTripId(parseInt(e.target.value, 10)); setError(''); }}
                 className="w-full pl-4 pr-10 py-3 rounded-xl bg-slate-800/80 border border-slate-600 text-white focus:outline-none focus:border-indigo-500 transition-all appearance-none font-semibold text-sm"
               >
                 {trips.map(t => (

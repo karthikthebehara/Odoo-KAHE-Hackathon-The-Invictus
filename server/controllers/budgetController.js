@@ -122,7 +122,7 @@ const toggleSharing = async (req, res) => {
         tripId,
         sharing_status: newStatus,
         public_url: newStatus === 'public'
-          ? `${process.env.CLIENT_URL || 'http://localhost:3000'}/trips/public/${tripId}`
+          ? `${process.env.CLIENT_URL || 'http://localhost:5173'}/public/${tripId}`
           : null,
       },
     });

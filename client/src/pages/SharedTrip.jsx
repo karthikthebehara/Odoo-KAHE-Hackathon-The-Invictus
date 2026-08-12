@@ -11,9 +11,13 @@ const SharedTrip = () => {
   const [copying, setCopying] = useState(false);
 
   async function fetchTrip() {
+    if (!tripId) {
+      setError('No trip ID provided.');
+      setLoading(false);
+      return;
+    }
     try {
-      const idToFetch = tripId || 1; 
-      const res = await api.get(`/trips/public/${idToFetch}`);
+      const res = await api.get(`/trips/public/${tripId}`);
       
       if (res.data && res.data.data) {
         const { trip, stops } = res.data.data;
@@ -34,18 +38,10 @@ const SharedTrip = () => {
   }, [tripId]);
 
 
-  const handleCopyTrip = async () => {
-    setCopying(true);
-    try {
-      const idToCopy = tripId || 1;
-      const res = await api.post(`/trips/copy/${idToCopy}`);
-      alert(`Trip copied successfully! New Trip ID: ${res.data.newTripId}`);
-      navigate('/dashboard'); 
-    } catch (err) {
-      console.error(err);
-      alert('Failed to copy trip. You might need to be logged in.');
-      setCopying(false);
-    }
+  const handleCopyTrip = () => {
+    // The copy-trip API endpoint does not exist on the server.
+    // For now, prompt the user to log in and clone manually.
+    navigate('/login');
   };
 
   if (loading) return (

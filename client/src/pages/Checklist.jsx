@@ -64,14 +64,14 @@ const Checklist = () => {
       const newStatus = currentStatus === 1 ? 0 : 1;
       setItems(items.map(item => item.id === id ? { ...item, is_packed: newStatus } : item));
       await api.patch(`/trips/${tripId}/checklist/${id}`, { is_packed: newStatus });
-    } catch (err) { console.error(err); fetchItems(); }
+    } catch (err) { console.error(err); fetchItems(tripId); }
   };
 
   const handleDelete = async (id) => {
     try {
       setItems(items.filter(item => item.id !== id));
       await api.delete(`/trips/${tripId}/checklist/${id}`);
-    } catch (err) { console.error(err); fetchItems(); }
+    } catch (err) { console.error(err); fetchItems(tripId); }
   };
 
   const groupedItems = items.reduce((acc, item) => {

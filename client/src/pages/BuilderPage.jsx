@@ -133,7 +133,7 @@ function StopCard({ stop, idx, onDelete, onAddActivity, onDeleteActivity }) {
     if (expanded && activities.length === 0 && !showForm) {
       loadActivities();
     }
-  }, [expanded]);
+  }, [expanded, activities.length, showForm]);
 
   const loadActivities = async () => {
     setLoadingActs(true);

@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, Navigate, useNavigate, useLocation } from 'react-router-dom';
-import axios from 'axios';
 import api from './api/axios';
 
 // ── Page imports ───────────────────────────────────────────────
@@ -59,8 +58,8 @@ function Login() {
       const response = await api.post('/auth/login', { email, password });
       if (response.data?.token) {
         login(response.data.token, response.data.data?.user);
+        navigate('/dashboard');
       }
-      navigate('/dashboard');
     } catch (err) {
       const data = err.response?.data;
       setError(data?.message || data?.errors?.[0] || 'Invalid credentials or server not reachable.');
